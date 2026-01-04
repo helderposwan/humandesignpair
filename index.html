@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- html2pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         // Critical: Ensure process.env exists immediately for ESM modules
         window.process = window.process || { env: {} };
@@ -32,7 +34,7 @@
             .no-print { display: none !important; }
             #root { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
             .max-w-md { max-width: none !important; }
-            .rounded-\[2\.5rem\], .rounded-3xl { border: 1px solid #eee !important; border-radius: 1rem !important; box-shadow: none !important; }
+            .rounded-\[2\.5rem\], .rounded-3xl, .rounded-xl, .rounded-2xl { border: 1px solid #eee !important; border-radius: 1rem !important; box-shadow: none !important; }
             header h1 { font-size: 2rem !important; color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
             .bg-indigo-600 { background-color: #4f46e5 !important; color: white !important; -webkit-print-color-adjust: exact; }
             .bg-white { background-color: white !important; -webkit-print-color-adjust: exact; }

@@ -13,13 +13,16 @@ const App: React.FC = () => {
   const [personA, setPersonA] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (step === 'welcome' && headingRef.current) {
       gsap.to(headingRef.current, {
         duration: 2,
-        text: "Unlock Your Connection",
+        text: "Buka Rahasia Koneksi Anda",
         ease: "none",
         delay: 0.5
       });
@@ -33,15 +36,43 @@ const App: React.FC = () => {
     }
 
     setStep('loading');
-    try {
-      const result = await getFullCosmicAnalysis(personA, personB);
-      setAnalysis(result);
-      setStep('results');
-    } catch (error: any) {
-      console.error("Analysis Error:", error);
-      alert("Gagal memproses data. Pastikan API_KEY sudah diset.");
-      setStep('input');
-    }
+    
+    // Memberikan jeda dramatis 1.5 detik untuk loading
+    setTimeout(async () => {
+      try {
+        const result = await getFullCosmicAnalysis(personA, personB);
+        setAnalysis(result);
+        setStep('results');
+      } catch (error: any) {
+        console.error("Analysis Error:", error);
+        alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
+        setStep('input');
+      }
+    }, 1500);
+  };
+
+  const handleDownloadPDF = () => {
+    if (!resultsRef.current || !analysis) return;
+    
+    setIsDownloading(true);
+    const element = resultsRef.current;
+    const fileName = `Kecocokan_Kosmik_${analysis.personA.name.replace(/\s+/g, '_')}_&_${analysis.personB.name.replace(/\s+/g, '_')}.pdf`;
+
+    const opt = {
+      margin: [10, 10],
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    // @ts-ignore
+    window.html2pdf().set(opt).from(element).save().then(() => {
+      setIsDownloading(false);
+    }).catch((err: any) => {
+      console.error("PDF download error:", err);
+      setIsDownloading(false);
+    });
   };
 
   const reset = () => {
@@ -51,7 +82,7 @@ const App: React.FC = () => {
 
   const ProfileCard = ({ profile, color }: { profile: any, color: string }) => (
     <div className={`bg-white p-5 rounded-xl border border-gray-100 shadow-sm mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
-      <h4 className={`text-lg font-heading font-bold ${color} mb-3`}>{profile.name}'s Profile</h4>
+      <h4 className={`text-lg font-heading font-bold ${color} mb-3`}>Profil {profile.name}</h4>
       <div className="grid grid-cols-2 gap-y-3 text-xs">
         <div>
           <span className="text-gray-400 block uppercase tracking-tighter">Human Design</span>
@@ -59,17 +90,17 @@ const App: React.FC = () => {
           <span className="block text-gray-500">{profile.hdProfile} ({profile.hdAuthority})</span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-tighter">Zodiac</span>
+          <span className="text-gray-400 block uppercase tracking-tighter">Zodiak</span>
           <span className="font-semibold text-gray-700">☀️ {profile.sunSign}</span>
           <span className="block text-gray-500">🌙 {profile.moonSign}</span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-tighter">Chinese Sign</span>
+          <span className="text-gray-400 block uppercase tracking-tighter">Shio</span>
           <span className="font-semibold text-gray-700">🏮 {profile.shio}</span>
         </div>
         <div>
-          <span className="text-gray-400 block uppercase tracking-tighter">Element</span>
-          <span className="font-semibold text-gray-700">🔥 {profile.element}</span>
+          <span className="text-gray-400 block uppercase tracking-tighter">Elemen</span>
+          <span className="font-semibold text-gray-700">💎 {profile.element}</span>
         </div>
       </div>
     </div>
@@ -81,7 +112,7 @@ const App: React.FC = () => {
         <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-indigo-600 to-rose-500 bg-clip-text text-transparent">
           CosmicVibe HD
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Universal Compatibility Decoder</p>
+        <p className="text-gray-500 text-sm mt-1">Dekoder Kompatibilitas Semesta</p>
       </header>
 
       <main className="flex-1 flex flex-col justify-center">
@@ -90,13 +121,13 @@ const App: React.FC = () => {
             <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm animate-bounce">
               <span className="text-4xl">🌌</span>
             </div>
-            <h2 className="text-[38px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
+            <h2 className="text-[32px] sm:text-[38px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
               <span>
                 <span ref={headingRef}></span>
                 <span className="cursor">|</span>
               </span>
             </h2>
-            <p className="text-gray-600 mb-10 mx-auto max-w-[260px] text-sm leading-relaxed">
+            <p className="text-gray-600 mb-10 mx-auto max-w-[280px] text-sm leading-relaxed">
               Temukan dinamika hubunganmu melalui Human Design, Astrologi, dan Shio hanya dengan data lahir.
             </p>
             <button 
@@ -149,55 +180,73 @@ const App: React.FC = () => {
 
         {step === 'results' && analysis && (
           <div className="animate-in zoom-in-95 fade-in duration-700 pb-10">
-            <div className="bg-white p-8 rounded-2xl shadow-sm text-center mb-6 relative overflow-hidden border border-gray-100">
-              <div className="relative">
-                <div className="text-6xl font-heading font-black text-indigo-600 mb-2">
-                  {analysis.compatibility.score}%
+            {/* Wrapper for PDF generation */}
+            <div ref={resultsRef} className="bg-[#fdfcfb] p-4 rounded-2xl">
+              <div className="bg-white p-8 rounded-2xl shadow-sm text-center mb-6 relative overflow-hidden border border-gray-100">
+                <div className="relative">
+                  <div className="text-6xl font-heading font-black text-indigo-600 mb-2">
+                    {analysis.compatibility.score}%
+                  </div>
+                  <h2 className="text-xl font-heading font-bold text-gray-800">{analysis.compatibility.headline}</h2>
+                  <span className="inline-block px-4 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full mt-3 uppercase tracking-widest">
+                    {analysis.compatibility.archetype}
+                  </span>
                 </div>
-                <h2 className="text-xl font-heading font-bold text-gray-800">{analysis.compatibility.headline}</h2>
-                <span className="inline-block px-4 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full mt-3 uppercase tracking-widest">
-                  {analysis.compatibility.archetype}
-                </span>
+              </div>
+
+              <ProfileCard profile={analysis.personA} color="text-indigo-600" />
+              <ProfileCard profile={analysis.personB} color="text-rose-500" />
+
+              <div className="bg-indigo-600 text-white p-6 rounded-2xl mb-6 shadow-md">
+                <h4 className="text-xs font-bold uppercase tracking-tighter opacity-80 mb-3">Dinamika Hubungan</h4>
+                <p className="text-md leading-relaxed font-light italic">
+                  "{analysis.compatibility.summary}"
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                  <h4 className="text-xs font-bold text-green-600 uppercase mb-2">Kekuatan</h4>
+                  <ul className="text-[10px] text-gray-600 space-y-2">
+                    {analysis.compatibility.strengths.map((s, i) => <li key={i}>• {s}</li>)}
+                  </ul>
+                </div>
+                <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                  <h4 className="text-xs font-bold text-amber-600 uppercase mb-2">Tantangan</h4>
+                  <ul className="text-[10px] text-gray-600 space-y-2">
+                    {analysis.compatibility.challenges.map((c, i) => <li key={i}>• {c}</li>)}
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="text-center py-4 border-t border-gray-100 mt-4 block">
+                <p className="text-[10px] text-gray-400">Hasil Analisis CosmicVibe HD - © 2026</p>
               </div>
             </div>
 
-            <ProfileCard profile={analysis.personA} color="text-indigo-600" />
-            <ProfileCard profile={analysis.personB} color="text-rose-500" />
-
-            <div className="bg-indigo-600 text-white p-6 rounded-2xl mb-6 shadow-md">
-              <h4 className="text-xs font-bold uppercase tracking-tighter opacity-80 mb-3">Dinamika Hubungan</h4>
-              <p className="text-md leading-relaxed font-light italic">
-                "{analysis.compatibility.summary}"
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                <h4 className="text-xs font-bold text-green-600 uppercase mb-2">Kekuatan</h4>
-                <ul className="text-[10px] text-gray-600 space-y-2">
-                  {analysis.compatibility.strengths.map((s, i) => <li key={i}>• {s}</li>)}
-                </ul>
-              </div>
-              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                <h4 className="text-xs font-bold text-amber-600 uppercase mb-2">Tantangan</h4>
-                <ul className="text-[10px] text-gray-600 space-y-2">
-                  {analysis.compatibility.challenges.map((c, i) => <li key={i}>• {c}</li>)}
-                </ul>
-              </div>
-            </div>
-
-            <div className="flex gap-4 no-print">
-              <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-xl active:scale-95 transition-all">Ulangi</button>
-              <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md active:scale-95 transition-all">Simpan PDF</button>
+            <div className="flex gap-4 no-print mt-4">
+              <button 
+                onClick={reset} 
+                className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-xl active:scale-95 transition-all"
+              >
+                Ulangi
+              </button>
+              <button 
+                onClick={handleDownloadPDF} 
+                disabled={isDownloading}
+                className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isDownloading ? 'Mengunduh...' : 'Simpan PDF'}
+              </button>
             </div>
           </div>
         )}
       </main>
 
       <footer className="mt-8 text-center text-xs text-gray-400 no-print pb-4">
-        <p>© 2026 CosmicVibe. For entertainment purposes.</p>
-        <p className="mt-1">Build by Haze Nightwalker</p>
-        <p className="mt-1 italic text-indigo-400">Discover your cosmic blueprint and universal connection.</p>
+        <p>© 2026 CosmicVibe. Khusus hiburan.</p>
+        <p className="mt-1">Dibuat oleh Haze Nightwalker</p>
+        <p className="mt-1 italic text-indigo-400">Temukan cetak biru kosmik dan koneksi universal Anda.</p>
       </footer>
     </div>
   );
