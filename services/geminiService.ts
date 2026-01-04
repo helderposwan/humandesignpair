@@ -7,9 +7,13 @@ import { BirthData, FullAnalysisResponse } from "../types.ts";
  */
 export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise<FullAnalysisResponse> => {
   // Obtain API key exclusively from process.env
-  // Added fallback for "API_Key" as seen in user's Cloudflare screenshot
-  const apiKey = process.env.API_KEY || (process.env as any).API_Key;
+  // Check for common naming variations
+  const apiKey = process.env.API_KEY || (process.env as any).API_Key || (process.env as any).api_key;
   
+  if (!apiKey || apiKey === 'undefined' || apiKey === '') {
+    throw new Error("API_KEY is missing. Harap lakukan 'Retry Deployment' di dashboard Cloudflare.");
+  }
+
   // Create instance right before making the call
   const ai = new GoogleGenAI({ apiKey: apiKey as string });
   

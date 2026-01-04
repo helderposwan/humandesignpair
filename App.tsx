@@ -27,23 +27,29 @@ const App: React.FC = () => {
   const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
   const [needsKeySetup, setNeedsKeySetup] = useState(false);
+  const [debugInfo, setDebugInfo] = useState<string>('');
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // Check for API key on load
+  const checkKey = async () => {
+    // Check all possible locations for the key
+    const envKey = process.env.API_KEY || (process.env as any).API_Key || (process.env as any).api_key;
+    const hasEnvKey = !!envKey && envKey !== 'undefined' && envKey !== '';
+    
+    if (hasEnvKey) {
+      setNeedsKeySetup(false);
+      setDebugInfo('Key detected in Environment');
+    } else if (window.aistudio) {
+      const selected = await window.aistudio.hasSelectedApiKey();
+      setNeedsKeySetup(!selected);
+      setDebugInfo(selected ? 'Key detected via AI Studio' : 'No key found. Please setup.');
+    } else {
+      setNeedsKeySetup(true);
+      setDebugInfo('No environment key and no AI Studio found.');
+    }
+  };
+
   useEffect(() => {
-    const checkKey = async () => {
-      // Look for both variants to be safe
-      const hasEnvKey = !!process.env.API_KEY || !!(process.env as any).API_Key;
-      
-      if (hasEnvKey) {
-        setNeedsKeySetup(false);
-      } else if (window.aistudio) {
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setNeedsKeySetup(!selected);
-      } else {
-        setNeedsKeySetup(true);
-      }
-    };
     checkKey();
   }, []);
 
@@ -62,9 +68,10 @@ const App: React.FC = () => {
   const handleOpenKeySelector = async () => {
     if (window.aistudio) {
       await window.aistudio.openSelectKey();
+      // Assume success as per race condition rules
       setNeedsKeySetup(false);
     } else {
-      alert("Please ensure the API_KEY environment variable is set in your Cloudflare dashboard.");
+      alert("No key found in Cloudflare. \n\nTips:\n1. Pastikan nama variabel 'API_KEY' (Huruf Besar).\n2. Pastikan sudah klik 'Retry Deployment' di Cloudflare.");
     }
   };
 
@@ -76,17 +83,16 @@ const App: React.FC = () => {
 
     setStep('loading');
     try {
-      console.log("Initiating API call...");
       const result = await getFullCosmicAnalysis(personA, personB);
       setAnalysis(result);
       setStep('results');
     } catch (error: any) {
       console.error("Analysis Error:", error);
       
-      if (error.message?.includes("Requested entity was not found") && window.aistudio) {
-        alert("API Key error. Please re-select your key.");
-        await window.aistudio.openSelectKey();
-        setStep('input');
+      if (error.message?.includes("Requested entity was not found") || error.message?.includes("API_KEY")) {
+        alert("API Key bermasalah atau tidak ditemukan. \n\nMohon pastikan Anda sudah melakukan 'Retry Deployment' di dashboard Cloudflare setelah menambah variabel.");
+        setStep('welcome');
+        setNeedsKeySetup(true);
         return;
       }
 
@@ -156,16 +162,26 @@ const App: React.FC = () => {
             
             {needsKeySetup ? (
               <div className="space-y-4">
-                <p className="text-xs text-rose-500 font-medium bg-rose-50 py-2 rounded-lg">API Key required for activation</p>
+                <p className="text-[10px] text-rose-500 font-medium bg-rose-50 py-2 rounded-lg px-2">
+                  Status: {debugInfo}
+                </p>
                 <button 
                   onClick={handleOpenKeySelector}
                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg active:scale-95"
                 >
-                  Set up API Key
+                  Set up API Key Manual
                 </button>
-                <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="block text-[10px] text-gray-400 hover:underline">
-                  Learn about Gemini API billing
-                </a>
+                <button 
+                  onClick={() => checkKey()}
+                  className="w-full bg-white border border-gray-200 text-gray-500 text-xs font-medium py-2 rounded-xl transition-all active:scale-95"
+                >
+                  Refresh Key Status
+                </button>
+                <div className="text-[10px] text-gray-400 mt-4 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">
+                  <p className="font-bold mb-1">Jika sudah set API_KEY di Cloudflare:</p>
+                  <p>1. Pastikan sudah klik <strong>Save</strong> di Cloudflare Settings.</p>
+                  <p>2. Wajib klik <strong>Retry Deployment</strong> di tab Deployments agar Cloudflare memasukkan kuncinya ke web.</p>
+                </div>
               </div>
             ) : (
               <button 
