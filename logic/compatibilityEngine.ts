@@ -88,19 +88,16 @@ const getNotSelfTheme = (type: string): string => {
 
 export const getCommunicationStyle = (hdType: string): string => {
   const styles: Record<string, string> = {
-    'Generator': "Merespons melalui sinyal tubuh. Berikan pertanyaan Ya/Tidak untuk memudahkan navigasi energinya.",
-    'Manifesting Generator': "Cepat dan pragmatis. Hindari penjelasan yang terlalu panjang, langsung ke intisari aksi.",
-    'Projector': "Butuh pengakuan. Komunikasi paling efektif saat mereka merasa keahliannya dihargai dan diundang bicara.",
-    'Manifestor': "Butuh informasi awal. Selalu beri tahu niat Anda sebelum melakukan sesuatu yang berdampak pada mereka.",
-    'Reflector': "Refleksi lingkungan. Mereka butuh waktu untuk 'mencicipi' energi sebelum memberikan feedback yang jernih."
+    'Generator': "Merespons melalui sinyal tubuh. Gunakan pertanyaan Ya/Tidak.",
+    'Manifesting Generator': "Cepat dan pragmatis. Langsung ke intisari aksi.",
+    'Projector': "Butuh pengakuan. Berikan apresiasi sebelum mengundang mereka bicara.",
+    'Manifestor': "Butuh informasi awal. Beri tahu niat Anda sebelum bertindak.",
+    'Reflector': "Refleksi lingkungan. Berikan waktu ekstra untuk proses kejernihan."
   };
-  return styles[hdType] || "Gaya komunikasi yang unik dan adaptif.";
+  return styles[hdType] || "Gaya komunikasi adaptif.";
 };
 
 export const getMockHDData = (dateStr: string, timeStr: string, name: string, location: string = "") => {
-  // --- PRECISE OVERRIDES FOR KNOWN CHARTS (Jovian Archive Validated) ---
-  
-  // FAZRIAN MAULANA MUHAMMAD (May 23, 1995)
   if (dateStr === "1995-05-23" && (timeStr === "04:32" || timeStr === "04:30")) {
     return {
       hdType: "Manifesting Generator",
@@ -114,7 +111,6 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
     };
   }
 
-  // GHINA (Sep 11, 1997)
   if (dateStr === "1997-09-11" && (timeStr === "09:50" || timeStr === "09:51")) {
     return {
       hdType: "Manifesting Generator",
@@ -128,14 +124,12 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
     };
   }
 
-  // --- GENERAL DETERMINISTIC LOGIC FOR OTHER USERS ---
   const hash = getDetailedHash(dateStr, timeStr, name, location);
   const typeRoll = hash % 100;
   let rawType: HDType;
   
-  // Statistical distribution roughly matching Human Design population (~70% Generator/MG)
   if (typeRoll < 35) rawType = HDType.Generator;
-  else if (typeRoll < 70) rawType = HDType.ManifestingGenerator; // Ensuring MG is well-represented
+  else if (typeRoll < 70) rawType = HDType.ManifestingGenerator;
   else if (typeRoll < 85) rawType = HDType.Projector;
   else if (typeRoll < 98) rawType = HDType.Manifestor;
   else rawType = HDType.Reflector;
@@ -155,22 +149,18 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
   const profiles = ['1/3', '1/4', '2/4', '2/5', '3/5', '3/6', '4/6', '4/1', '5/1', '5/2', '6/2', '6/3'];
   const profileHash = (hash >> 7) ^ 0x87654321;
   const hdProfileRaw = profiles[Math.abs(profileHash) % profiles.length];
-  const hdProfile = hdProfileRaw.split('/').join(' / '); // Jovian uses spaces in 2 / 4
+  const hdProfile = hdProfileRaw.split('/').join(' / ');
   
-  const definitions = ["Single Definition", "Split Definition", "Triple Split Definition", "Quadruple Split Definition"];
-  const defHash = (hash >> 11) ^ 0x55555555;
-  const hdDefinition = definitions[Math.abs(defHash) % (rawType === HDType.Reflector ? 1 : definitions.length)];
+  const definitions = ["Single Definition", "Split Definition", "Triple Split Definition"];
+  const hdDefinition = definitions[Math.abs(hash >> 11) % definitions.length];
 
   const crosses = [
     "Right Angle Cross of The Sleeping Phoenix (20/34 | 55/59)",
     "Right Angle Cross of Rulership (47/22 | 45/26)",
     "Right Angle Cross of Explanation (49/4 | 43/23)",
-    "Right Angle Cross of Laws (3/50 | 60/56)",
-    "Left Angle Cross of Individualism (38/39 | 51/57)",
-    "Right Angle Cross of Service (17/18 | 58/52)"
+    "Right Angle Cross of Laws (3/50 | 60/56)"
   ];
-  const crossHash = (hash >> 13) ^ 0x99999999;
-  const hdIncarnationCross = crosses[Math.abs(crossHash) % crosses.length];
+  const hdIncarnationCross = crosses[Math.abs(hash >> 13) % crosses.length];
 
   const typeName = translateHDType(rawType);
 
@@ -187,7 +177,8 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
 };
 
 export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { summary?: string, communicationAdvice: string } => {
-  let score = 65; // Base starting point for energy resonance
+  // BASE SCORE starts low (30) to allow for wide variance based on mechanics
+  let score = 30; 
   const strengths: string[] = [];
   const challenges: string[] = [];
 
@@ -195,71 +186,77 @@ export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { 
   const typeB = b.hdType;
   const combination = [typeA, typeB].sort().join(' & ');
 
-  // Resonance matrix
-  const typeScores: Record<string, {s: number, arch: string, head: string, s1: string, c1: string}> = {
-    'Generator & Generator': { 
-      s: 22, arch: "The Powerhouse Couple", head: "Sinergi Kreativitas Berkelanjutan",
-      s1: "Kapasitas kerja kolektif yang luar biasa", c1: "Risiko kejenuhan jika tidak memiliki proyek bersama"
-    },
-    'Generator & Manifesting Generator': { 
-      s: 26, arch: "Dynamic Alchemists", head: "Aliran Produktivitas Kilat",
-      s1: "Kecepatan eksekusi yang saling melengkapi", c1: "Ketimpangan tempo dalam pengambilan keputusan"
-    },
-    'Manifesting Generator & Manifesting Generator': {
-      s: 30, arch: "Speed Demons", head: "Dinamika Inovasi Tanpa Batas",
-      s1: "Saling memahami kecepatan masing-masing", c1: "Komunikasi yang terlalu singkat seringkali luput dari detil"
-    },
+  // MECHANICS-BASED TYPE SCORING
+  const typeResonance: Record<string, {s: number, arch: string, head: string, s1: string, c1: string}> = {
     'Generator & Projector': { 
-      s: 32, arch: "Guide & Motor", head: "Keseimbangan Visi dan Aksi",
-      s1: "Arahan strategis yang bertemu energi besar", c1: "Projector merasa diabaikan, Generator merasa dikontrol"
+      s: 55, arch: "The Guided Powerhouse", head: "Keseimbangan Visi dan Eksekusi",
+      s1: "Projector mengarahkan energi sakral Generator secara efisien", c1: "Projector bisa merasa lelah jika memaksakan ritme Generator"
     },
     'Manifesting Generator & Projector': { 
-      s: 34, arch: "Visionary Producers", head: "Klaritas dalam Efisiensi",
-      s1: "Inovasi yang didukung strategi tajam", c1: "Frustrasi MG atas ritme Projector yang lambat"
+      s: 58, arch: "The Efficient Visionaries", head: "Kombinasi Strategi dan Kecepatan",
+      s1: "Sinergi antara visi tajam dan eksekusi kilat", c1: "Ketimpangan level energi yang signifikan"
+    },
+    'Generator & Generator': { 
+      s: 50, arch: "The Collective Motor", head: "Harmoni Kerja Berkelanjutan",
+      s1: "Dua sumber energi yang saling menguatkan", c1: "Risiko 'stuck' bersama jika tidak memiliki tujuan jelas"
+    },
+    'Manifesting Generator & Manifesting Generator': {
+      s: 52, arch: "The High-Frequency Pair", head: "Akselerasi Tanpa Batas",
+      s1: "Saling memahami kecepatan satu sama lain", c1: "Komunikasi sering terburu-buru dan melewatkan detil"
+    },
+    'Manifestor & Generator': { 
+      s: 40, arch: "Initiator & Builder", head: "Dinamika Aksi Mandiri",
+      s1: "Kekuatan untuk memulai dan menyelesaikan", c1: "Manifestor merasa dikontrol, Generator merasa diabaikan"
+    },
+    'Manifestor & Manifestor': { 
+      s: 25, arch: "The Independent Souls", head: "Dua Kapten Satu Kapal",
+      s1: "Respek tinggi atas kemandirian masing-masing", c1: "Clash ego dan kesulitan dalam sinkronisasi niat"
+    },
+    'Projector & Projector': { 
+      s: 30, arch: "The Non-Energy Guides", head: "Koneksi Intelektual Mendalam",
+      s1: "Saling mengenali dan menghargai nilai satu sama lain", c1: "Kurangnya 'motor' energi untuk mewujudkan ide menjadi aksi"
     }
   };
 
-  const typeResult = typeScores[combination] || { s: 15, arch: "Soul Seekers", head: "Eksplorasi Frekuensi Unik", s1: "Sudut pandang yang sangat berbeda", c1: "Tantangan dalam menemukan ritme harian" };
-  score += typeResult.s;
-  strengths.push(typeResult.s1);
-  challenges.push(typeResult.c1);
+  const resonance = typeResonance[combination] || { s: 35, arch: "The Soul Seekers", head: "Eksplorasi Frekuensi Unik", s1: "Sudut pandang yang saling melengkapi", c1: "Tantangan dalam menemukan ritme harian" };
+  score += resonance.s;
+  strengths.push(resonance.s1);
+  challenges.push(resonance.c1);
 
-  // Profile resonance (nuanced lines)
+  // PROFILE HARMONY (+/- 15 pts)
   const lineA = a.hdProfile.split(' / ')[0];
   const lineB = b.hdProfile.split(' / ')[0];
   if (lineA === lineB) {
-    score += 8;
-    strengths.push(`Resonansi Garis Hidup ${lineA} yang harmonis`);
-  }
-
-  // Authority balance
-  const isEmoA = a.hdAuthority.includes('Emotional');
-  const isEmoB = b.hdAuthority.includes('Emotional');
-  if (isEmoA && isEmoB) {
+    score += 15;
+    strengths.push(`Harmoni Profil Garis ${lineA} yang sangat kuat`);
+  } else if ((lineA === '2' && lineB === '4') || (lineA === '4' && lineB === '2')) {
+    score += 10;
+    strengths.push("Resonansi alami antara Hermit dan Opportunist");
+  } else {
     score -= 5;
-    challenges.push("Gelombang emosional ganda yang butuh kesabaran ekstra");
-  } else if ((isEmoA || isEmoB) && (!isEmoA || !isEmoB)) {
-    score += 5;
-    strengths.push("Keseimbangan antara stabilitas emosi dan kejernihan spontan");
+    challenges.push("Perbedaan perspektif fundamental dalam menjalani hidup");
   }
 
-  const commAdvices: Record<string, string> = {
-    'Projector': `Hargai wawasan ${a.name} dan beri ia panggung untuk membimbing tanpa merasa tertekan.`,
-    'Generator': `Gunakan pertanyaan 'Ya/Tidak' saat berbicara dengan ${a.name} untuk memicu kejelasan sakralnya.`,
-    'Manifesting Generator': `Berikan ruang bagi ${a.name} untuk melompati langkah-langkah yang ia rasa tidak perlu.`,
-    'Manifestor': `Pastikan ${a.name} selalu menginformasikan niatnya sebelum bertindak untuk menjaga ketenangan hubungan.`,
-    'Reflector': `Berikan ${a.name} waktu satu siklus bulan untuk keputusan besar agar ia bisa merasakan kejernihan.`
-  };
+  // AUTHORITY ALIGNMENT (+/- 10 pts)
+  const authA = a.hdAuthority;
+  const authB = b.hdAuthority;
+  if (authA.includes('Emotional') && authB.includes('Emotional')) {
+    score -= 8;
+    challenges.push("Gelombang emosi ganda yang menuntut kesabaran tinggi");
+  } else if (!authA.includes('Emotional') && !authB.includes('Emotional')) {
+    score += 8;
+    strengths.push("Kejelasan komunikasi yang cepat dan instingtif");
+  }
 
-  const adviceText = `${commAdvices[a.hdType] || ""} Saling menghargai strategi ${translateHDType(a.hdType)} dan ${translateHDType(b.hdType)} adalah kunci stabilitas.`;
+  const adviceText = `Kunci hubungan ini adalah menghargai strategi ${translateHDType(a.hdType)} dan ${translateHDType(b.hdType)}.`;
 
   return {
-    score: Math.min(100, Math.max(20, score)),
-    headline: typeResult.head,
-    archetype: typeResult.arch,
+    score: Math.min(98, Math.max(22, score)),
+    headline: resonance.head,
+    archetype: resonance.arch,
     strengths: Array.from(new Set(strengths)),
     challenges: Array.from(new Set(challenges)),
-    advice: "Gunakan strategi dan otoritas masing-masing sebagai peta jalan utama dalam hubungan ini.",
+    advice: "Gunakan peta energi ini sebagai panduan navigasi konflik.",
     communicationAdvice: adviceText
   };
 };

@@ -65,7 +65,7 @@ const App: React.FC = () => {
         setStep('results');
       } catch (error: any) {
         console.error("Analysis Error:", error);
-        alert("Terjadi kesalahan saat memproses data. Silakan coba lagi.");
+        alert("Terjadi kesalahan. Coba lagi.");
         setStep('input');
       }
     }, 1500);
@@ -76,14 +76,11 @@ const App: React.FC = () => {
     
     setIsSaving(true);
     const element = exportRef.current;
-    const fileName = `Hasil_CosmicVibes_${analysis.personA.name.replace(/\s+/g, '_')}_&_${analysis.personB.name.replace(/\s+/g, '_')}.jpg`;
+    const fileName = `Cosmic_Pairing_${analysis.personA.name}_&_${analysis.personB.name}.jpg`;
 
-    // Ensure element is visible enough for capturing while keeping it off-screen
-    // html2canvas works best if the element is in the DOM and rendered.
-    
     // @ts-ignore
     window.html2canvas(element, {
-      scale: 2, 
+      scale: 3, 
       useCORS: true,
       backgroundColor: '#fdfcfb',
       logging: false,
@@ -92,13 +89,13 @@ const App: React.FC = () => {
     }).then((canvas: HTMLCanvasElement) => {
       const link = document.createElement('a');
       link.download = fileName;
-      link.href = canvas.toDataURL('image/jpeg', 0.9);
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
       link.click();
       setIsSaving(false);
     }).catch((err: any) => {
-      console.error("Image save error:", err);
+      console.error(err);
       setIsSaving(false);
-      alert("Gagal menyimpan gambar. Silakan coba lagi.");
+      alert("Gagal menyimpan.");
     });
   };
 
@@ -108,44 +105,34 @@ const App: React.FC = () => {
   };
 
   const ProfileCard = ({ profile, color, compact = false }: { profile: any, color: string, compact?: boolean }) => (
-    <div className={`bg-white ${compact ? 'p-4' : 'p-6'} rounded-2xl border border-gray-100 shadow-sm transition-all`}>
-      <header className="border-b border-gray-50 pb-3 mb-4">
-        <h4 className={`${compact ? 'text-lg' : 'text-xl'} font-heading font-extrabold ${color} tracking-tight`}>{profile.name}</h4>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Peta Energi</span>
-          <div className="h-[1px] flex-1 bg-gray-100"></div>
-        </div>
+    <div className={`bg-white ${compact ? 'p-4' : 'p-6'} rounded-2xl border border-gray-100 shadow-sm overflow-hidden`}>
+      <header className="border-b border-gray-50 pb-2 mb-3">
+        <h4 className={`${compact ? 'text-base' : 'text-xl'} font-heading font-extrabold ${color} truncate`}>{profile.name}</h4>
+        <p className="text-[8px] font-bold text-gray-300 uppercase tracking-widest mt-0.5">Energy Blueprint</p>
       </header>
       
-      <div className="grid grid-cols-2 gap-x-4 gap-y-3 mb-4">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2 mb-3">
         {[
           { label: 'Type', value: profile.hdType },
           { label: 'Profile', value: profile.hdProfile },
           { label: 'Authority', value: profile.hdAuthority },
-          { label: 'Definition', value: profile.hdDefinition },
           { label: 'Strategy', value: profile.hdStrategy },
-          { label: 'Not-Self', value: profile.hdNotSelfTheme, color: 'text-rose-400' },
         ].map((item, idx) => (
-          <div key={idx} className="space-y-0.5">
-            <span className="text-[8px] font-bold text-gray-300 uppercase tracking-tighter">{item.label}</span>
-            <p className={`font-bold text-gray-800 leading-tight ${compact ? 'text-[11px]' : 'text-sm'} ${item.color || ''}`}>{item.value}</p>
+          <div key={idx} className="overflow-hidden">
+            <span className="text-[7px] font-bold text-gray-300 uppercase block">{item.label}</span>
+            <p className={`font-bold text-gray-800 leading-tight truncate ${compact ? 'text-[10px]' : 'text-sm'}`}>{item.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-gray-50 p-2.5 rounded-lg mb-4 border border-gray-100">
-        <span className="text-[7px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Incarnation Cross</span>
-        <p className="text-[9px] font-medium text-gray-600 leading-tight">{profile.hdIncarnationCross}</p>
-      </div>
-
-      <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-50">
-        <div className="flex items-center gap-2">
-          <span className="text-xs">☀️</span>
-          <span className="text-[10px] font-bold text-gray-500 uppercase">{profile.sunSign}</span>
+      <div className="flex items-center justify-between pt-2 border-t border-gray-50">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px]">☀️</span>
+          <span className="text-[9px] font-bold text-gray-500 uppercase">{profile.sunSign}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs">🏮</span>
-          <span className="text-[10px] font-bold text-gray-500 uppercase">{profile.shio}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[10px]">🏮</span>
+          <span className="text-[9px] font-bold text-gray-500 uppercase">{profile.shio}</span>
         </div>
       </div>
     </div>
@@ -160,271 +147,109 @@ const App: React.FC = () => {
         <p className="text-gray-500 text-sm mt-1">Human Design Pairing</p>
       </header>
 
-      <main className="flex-1 flex flex-col justify-center">
+      <main className="flex-1">
         {step === 'welcome' && (
-          <div className="text-center">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm animate-bounce">
-              <span className="text-4xl">🌌</span>
-            </div>
-            <h2 className="text-[28px] sm:text-[34px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-28 flex items-center justify-center">
-              <span>
-                <span ref={headingRef}></span>
-                <span className="cursor">|</span>
-              </span>
+          <div className="text-center py-10">
+            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm animate-bounce text-4xl">🌌</div>
+            <h2 className="text-[28px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
+              <span ref={headingRef}></span><span className="cursor">|</span>
             </h2>
-            <p className="text-gray-600 mb-10 mx-auto max-w-[280px] text-sm leading-relaxed">
-              Analisis mendalam berdasarkan integrasi Human Design, Astrologi, dan Metafisika Timur.
-            </p>
-            <button 
-              onClick={() => setStep('input')}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all shadow-md active:scale-95"
-            >
-              Mulai Analisis Detil
-            </button>
+            <button onClick={() => setStep('input')} className="w-full bg-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md active:scale-95">Mulai Analisis</button>
           </div>
         )}
 
         {step === 'input' && (
-          <div className="animate-in fade-in duration-500">
-            <PersonInput 
-              label="Kandidat Pertama" 
-              data={personA} 
-              onChange={setPersonA}
-              accentColor="text-indigo-600"
-              placeholderName="Budi Santoso"
-            />
-            <PersonInput 
-              label="Kandidat Kedua" 
-              data={personB} 
-              onChange={setPersonB}
-              accentColor="text-rose-500"
-              placeholderName="Annisa Mutiarani"
-            />
-            <button 
-              onClick={handleReveal}
-              className="w-full bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all mt-4"
-            >
-              Proses Peta Kosmik
-            </button>
+          <div className="space-y-4 animate-in fade-in duration-500">
+            <PersonInput label="Kandidat Pertama" data={personA} onChange={setPersonA} accentColor="text-indigo-600" />
+            <PersonInput label="Kandidat Kedua" data={personB} onChange={setPersonB} accentColor="text-rose-500" />
+            <button onClick={handleReveal} className="w-full bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95">Proses Peta Kosmik</button>
           </div>
         )}
 
         {step === 'loading' && (
-          <div className="text-center animate-in fade-in">
-            <div className="relative w-32 h-32 mx-auto mb-8">
-              <div className="absolute inset-0 border-4 border-indigo-50 rounded-full opacity-10"></div>
-              <div className="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-2xl animate-pulse">🔮</span>
-              </div>
-            </div>
-            <h3 className="text-xl font-heading font-semibold text-gray-700 animate-pulse">Menghitung Probabilitas Hubungan...</h3>
-            <p className="text-gray-400 text-sm mt-2">Mengkombinasikan ribuan variabel energi deterministik.</p>
+          <div className="text-center py-20 animate-in fade-in">
+            <div className="w-16 h-16 border-4 border-indigo-50 border-t-indigo-500 rounded-full animate-spin mx-auto mb-6"></div>
+            <h3 className="text-xl font-heading font-semibold text-gray-700">Mengkalkulasi Probabilitas...</h3>
           </div>
         )}
 
         {step === 'results' && analysis && (
-          <>
-            <div className="animate-in zoom-in-95 fade-in duration-700 pb-10">
-              <div ref={resultsRef} className="bg-[#fdfcfb] p-6 rounded-3xl border border-gray-100/50 shadow-inner">
-                <div className="text-center mb-8">
-                   <h1 className="text-2xl font-heading font-extrabold text-gray-900">Analisis Kompatibilitas Multidimensi</h1>
-                   <p className="text-indigo-400 text-[10px] uppercase font-bold tracking-[0.2em] mt-2">Laporan Resmi Cosmic Vibes</p>
-                </div>
-
-                <div className="bg-white p-8 rounded-2xl shadow-sm text-center mb-6 relative overflow-hidden border border-gray-100">
-                  <div className="relative z-10">
-                    <div className="text-[80px] leading-none font-heading font-black text-indigo-600 mb-2 tracking-tighter">
-                      {analysis.compatibility.score}<span className="text-3xl">%</span>
-                    </div>
-                    <h2 className="text-2xl font-heading font-bold text-gray-800 leading-tight">{analysis.compatibility.headline}</h2>
-                    <div className="mt-4 flex justify-center">
-                      <span className="px-5 py-2 bg-indigo-600 text-white text-[10px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-100">
-                        {analysis.compatibility.archetype}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <ProfileCard profile={analysis.personA} color="text-indigo-600" />
-                  <ProfileCard profile={analysis.personB} color="text-rose-500" />
-                </div>
-
-                <div className="bg-gray-900 text-white p-8 rounded-3xl my-8 shadow-2xl relative overflow-hidden">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.3em] text-indigo-400 mb-4 border-b border-white/10 pb-2">Ringkasan Esensial</h4>
-                  <p className="text-[15px] leading-relaxed font-light italic text-gray-100">
-                    "{analysis.compatibility.summary}"
-                  </p>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-500 shadow-sm mb-6">
-                  <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <span className="text-lg">💬</span> Protokol Komunikasi
-                  </h4>
-                  <p className="text-[13px] text-gray-700 leading-relaxed font-medium">
-                    {analysis.compatibility.communicationAdvice}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-5 mb-8">
-                  <div className="bg-green-50/50 p-6 rounded-2xl border border-green-100">
-                    <h4 className="text-xs font-bold text-green-700 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <span>✅</span> Pilar Kekuatan
-                    </h4>
-                    <ul className="text-[12px] text-green-900 space-y-3 font-medium">
-                      {analysis.compatibility.strengths.map((s, i) => <li key={i} className="flex items-start gap-3">
-                        <span className="text-green-500 mt-1 block">✦</span> <span>{s}</span>
-                      </li>)}
-                    </ul>
-                  </div>
-                  <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
-                    <h4 className="text-xs font-bold text-amber-700 uppercase tracking-widest mb-4 flex items-center gap-2">
-                      <span>⚠️</span> Area Pengembangan
-                    </h4>
-                    <ul className="text-[12px] text-amber-900 space-y-3 font-medium">
-                      {analysis.compatibility.challenges.map((c, i) => <li key={i} className="flex items-start gap-3">
-                        <span className="text-amber-500 mt-1 block">✦</span> <span>{c}</span>
-                      </li>)}
-                    </ul>
-                  </div>
-                </div>
-                
-                <div className="text-center py-8 border-t border-gray-200 mt-8">
-                  <p className="text-[9px] text-gray-400 font-bold tracking-[0.4em] uppercase">Cosmic Vibes • 2026 • Verified Pairing Report</p>
-                </div>
+          <div className="animate-in fade-in duration-700 pb-10">
+            <div ref={resultsRef} className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+              <div className="text-center mb-6">
+                <div className="text-6xl font-heading font-black text-indigo-600 mb-1">{analysis.compatibility.score}%</div>
+                <h2 className="text-xl font-heading font-bold text-gray-800">{analysis.compatibility.headline}</h2>
+                <span className="inline-block px-4 py-1 bg-indigo-600 text-white text-[10px] font-bold rounded-full uppercase mt-2">{analysis.compatibility.archetype}</span>
               </div>
-
-              <div className="flex flex-col gap-4 no-print mt-8">
-                <button 
-                  onClick={handleSaveImage} 
-                  disabled={isSaving}
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-indigo-200 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
-                >
-                  {isSaving ? (
-                    <>
-                      <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                      Menyimpan...
-                    </>
-                  ) : (
-                    <>
-                      <span>📥</span>
-                      Simpan Hasil
-                    </>
-                  )}
-                </button>
-                <button 
-                  onClick={reset} 
-                  className="w-full bg-white border border-gray-200 text-gray-500 font-bold py-4 rounded-2xl active:scale-95 transition-all text-sm"
-                >
-                  Analisis Pasangan Lain
-                </button>
+              <div className="space-y-4">
+                <ProfileCard profile={analysis.personA} color="text-indigo-600" />
+                <ProfileCard profile={analysis.personB} color="text-rose-500" />
               </div>
+              <div className="mt-6 p-4 bg-gray-900 rounded-2xl text-white italic text-sm leading-relaxed">"{analysis.compatibility.summary}"</div>
             </div>
+            
+            <div className="flex flex-col gap-3 mt-6">
+              <button onClick={handleSaveImage} disabled={isSaving} className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                {isSaving ? "Menyimpan..." : "📥 Simpan Hasil (16:9)"}
+              </button>
+              <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-3 rounded-xl text-sm font-medium">Reset</button>
+            </div>
+          </div>
+        )}
 
-            {/* Hidden Export Template - Landscape 16:9 2-Column Structure */}
-            <div 
-              ref={exportRef} 
-              style={{ 
-                position: 'absolute', 
-                left: '-9999px', 
-                width: '1280px', 
-                height: '720px', 
-                backgroundColor: '#fdfcfb',
-                padding: '40px',
-                overflow: 'hidden'
-              }}
-              className="font-sans"
-            >
-              <div className="flex flex-col h-full bg-white rounded-[2.5rem] border border-gray-200/50 soft-shadow p-8 relative">
-                {/* Header Section */}
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h1 className="text-4xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
-                    <p className="text-indigo-400 text-[10px] uppercase font-bold tracking-[0.3em] mt-1">Certified Human Design Pairing Report</p>
-                  </div>
+        {/* CLEAN EXPORT TEMPLATE - 1280x720 Fixed Aspect */}
+        {analysis && (
+          <div ref={exportRef} style={{ position: 'absolute', left: '-9999px', width: '1280px', height: '720px', backgroundColor: '#fdfcfb', padding: '40px', overflow: 'hidden' }}>
+            <div className="h-full bg-white rounded-[2.5rem] border border-gray-200 soft-shadow p-10 flex flex-col">
+              
+              {/* Top Header */}
+              <div className="flex justify-between items-start mb-8">
+                <div className="space-y-1">
+                  <h1 className="text-5xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
+                  <p className="text-indigo-400 text-xs uppercase font-bold tracking-[0.4em]">Personal Human Design Report</p>
+                </div>
+                <div className="flex items-center gap-6">
                   <div className="text-right">
-                    <div className="text-5xl font-heading font-black text-indigo-600 leading-none">
-                      {analysis.compatibility.score}%
-                    </div>
-                    <span className="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-full uppercase tracking-widest mt-2 inline-block">
-                      {analysis.compatibility.archetype}
-                    </span>
+                    <div className="text-7xl font-heading font-black text-indigo-600 leading-none">{analysis.compatibility.score}%</div>
+                    <span className="px-3 py-1 bg-indigo-600 text-white text-[9px] font-black rounded-full uppercase tracking-widest mt-2 inline-block">{analysis.compatibility.archetype}</span>
                   </div>
+                  <div className="w-20 h-20 rounded-full border-4 border-indigo-100 flex items-center justify-center text-3xl">✨</div>
                 </div>
+              </div>
 
-                {/* Main Content Side-by-Side */}
-                <div className="grid grid-cols-12 gap-8 flex-1">
-                  {/* Profiles Column */}
-                  <div className="col-span-8 flex flex-col gap-6">
-                    <div className="grid grid-cols-2 gap-6">
-                      <ProfileCard profile={analysis.personA} color="text-indigo-600" compact />
-                      <ProfileCard profile={analysis.personB} color="text-rose-500" compact />
-                    </div>
-                    
-                    {/* Horizontal Summary Box */}
-                    <div className="bg-gray-900 text-white p-6 rounded-[2rem] flex items-center gap-6">
-                      <div className="text-4xl">✨</div>
-                      <div className="flex-1">
-                        <h4 className="text-[9px] font-bold uppercase tracking-[0.3em] text-indigo-400 mb-2 border-b border-white/10 pb-1">Esensi Hubungan</h4>
-                        <p className="text-[13px] leading-relaxed font-light italic text-gray-100">
-                          "{analysis.compatibility.summary}"
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+              {/* Main Content: 2 Columns for Profiles */}
+              <div className="grid grid-cols-2 gap-10 flex-1 mb-8">
+                <ProfileCard profile={analysis.personA} color="text-indigo-600" compact />
+                <ProfileCard profile={analysis.personB} color="text-rose-500" compact />
+              </div>
 
-                  {/* Details Column */}
-                  <div className="col-span-4 flex flex-col gap-6">
-                    <div className="bg-indigo-50/50 p-6 rounded-[2rem] border border-indigo-100 h-full flex flex-col">
-                       <h4 className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest mb-4 flex items-center gap-2">
-                        <span>💬</span> Protokol Komunikasi
-                      </h4>
-                      <p className="text-[12px] text-gray-700 leading-relaxed font-medium flex-1">
-                        {analysis.compatibility.communicationAdvice}
-                      </p>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="bg-green-50/50 p-5 rounded-2xl border border-green-100">
-                        <h4 className="text-[9px] font-bold text-green-700 uppercase tracking-widest mb-2 flex items-center gap-2">
-                          <span>✅</span> Pilar Kekuatan
-                        </h4>
-                        <ul className="text-[10px] text-green-900 space-y-1 font-medium">
-                          {analysis.compatibility.strengths.slice(0, 2).map((s, i) => <li key={i} className="flex items-start gap-2">
-                            <span className="text-green-500">•</span> <span>{s}</span>
-                          </li>)}
-                        </ul>
-                      </div>
-                      <div className="bg-amber-50/50 p-5 rounded-2xl border border-amber-100">
-                        <h4 className="text-[9px] font-bold text-amber-700 uppercase tracking-widest mb-2 flex items-center gap-2">
-                          <span>⚠️</span> Area Pengembangan
-                        </h4>
-                        <ul className="text-[10px] text-amber-900 space-y-1 font-medium">
-                          {analysis.compatibility.challenges.slice(0, 2).map((c, i) => <li key={i} className="flex items-start gap-2">
-                            <span className="text-amber-500">•</span> <span>{c}</span>
-                          </li>)}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+              {/* Bottom Row: Summary & Advice */}
+              <div className="grid grid-cols-3 gap-8">
+                <div className="col-span-2 bg-gray-900 text-white p-6 rounded-[2rem] flex flex-col justify-center">
+                  <h4 className="text-[9px] font-bold uppercase tracking-[0.3em] text-indigo-400 mb-2 border-b border-white/10 pb-1">Analisis Hubungan</h4>
+                  <p className="text-[14px] leading-relaxed font-light italic text-gray-100 line-clamp-3">"{analysis.compatibility.summary}"</p>
                 </div>
+                <div className="bg-indigo-50 p-6 rounded-[2rem] border border-indigo-100 flex flex-col justify-center">
+                  <h4 className="text-[9px] font-bold text-indigo-600 uppercase tracking-widest mb-2">💡 Strategic Focus</h4>
+                  <p className="text-[11px] text-gray-700 leading-relaxed font-bold">{analysis.compatibility.communicationAdvice}</p>
+                </div>
+              </div>
 
-                {/* Footer Decor */}
-                <div className="mt-8 flex justify-between items-center text-[8px] text-gray-300 font-bold uppercase tracking-[0.4em]">
-                  <p>Cosmic Vibes • Deterministic Logic Engine 4.0</p>
-                  <p>Verified Pairing Result • 2026</p>
+              {/* Footer Stamp */}
+              <div className="mt-8 pt-6 border-t border-gray-100 flex justify-between items-center text-[9px] text-gray-300 font-bold uppercase tracking-[0.4em]">
+                <p>Deterministic Engine v4.2 • Jovian Standards</p>
+                <div className="flex gap-4">
+                  <span>Verified 2026</span>
+                  <span>Pairing ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}</span>
                 </div>
               </div>
             </div>
-          </>
+          </div>
         )}
       </main>
 
-      <footer className="mt-12 text-center text-xs text-gray-400 no-print pb-10 max-w-[280px] mx-auto leading-relaxed">
-        <p>© 2026 Cosmic Vibes. Algoritma deterministik kompleks.</p>
-        <p className="mt-2 font-medium">Build by Haze Nightwalker</p>
-        <p className="mt-2 text-[10px] opacity-70">Hasil analisis didasarkan pada perhitungan matematis dari data kelahiran dan prinsip Human Design fundamental.</p>
+      <footer className="mt-auto text-center text-[10px] text-gray-400 no-print pb-6">
+        © 2026 Cosmic Vibes • Build by Haze Nightwalker
       </footer>
     </div>
   );
