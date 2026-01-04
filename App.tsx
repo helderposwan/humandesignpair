@@ -34,13 +34,13 @@ const App: React.FC = () => {
           text: phrase,
           ease: "none",
         })
-        .to({}, { duration: 2 }) // Pause at end of phrase
+        .to({}, { duration: 2 })
         .to(headingRef.current, {
           duration: 1,
           text: "",
           ease: "none",
         })
-        .to({}, { duration: 0.5 }); // Short pause before next phrase
+        .to({}, { duration: 0.5 });
       });
 
       return () => {
@@ -106,32 +106,70 @@ const App: React.FC = () => {
   };
 
   const ProfileCard = ({ profile, color }: { profile: any, color: string }) => (
-    <div className={`bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
-      <h4 className={`text-lg font-heading font-bold ${color} mb-3 border-b border-gray-50 pb-2`}>Cetak Biru {profile.name}</h4>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-4 text-xs mb-4">
-        <div>
-          <span className="text-gray-400 block uppercase tracking-tighter mb-1 font-semibold">Human Design</span>
-          <span className="font-bold text-gray-800 block text-sm leading-tight">{profile.hdType}</span>
-          <span className="text-gray-500 italic">Profil {profile.hdProfile} • {profile.hdAuthority}</span>
+    <div className={`bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+      <header className="border-b border-gray-50 pb-4 mb-6">
+        <h4 className={`text-xl font-heading font-extrabold ${color} tracking-tight`}>{profile.name}</h4>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Peta Energi Kosmik</span>
+          <div className="h-[1px] flex-1 bg-gray-100"></div>
         </div>
-        <div>
-          <span className="text-gray-400 block uppercase tracking-tighter mb-1 font-semibold">Astrologi</span>
-          <span className="font-bold text-gray-800 block text-sm">☀️ {profile.sunSign}</span>
-          <span className="text-gray-500">🌙 {profile.moonSign}</span>
+      </header>
+      
+      {/* Primary HD Info - Jovian Style Layout */}
+      <div className="grid grid-cols-2 gap-y-4 gap-x-6 mb-6">
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Type</span>
+          <p className="font-bold text-gray-900 text-sm">{profile.hdType}</p>
         </div>
-        <div>
-          <span className="text-gray-400 block uppercase tracking-tighter mb-1 font-semibold">Shio & Elemen</span>
-          <span className="font-bold text-gray-800 block text-sm">🏮 {profile.shio}</span>
-          <span className="text-gray-500">Energi {profile.element}</span>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Profile</span>
+          <p className="font-bold text-gray-900 text-sm">{profile.hdProfile}</p>
         </div>
-        <div>
-          <span className="text-gray-400 block uppercase tracking-tighter mb-1 font-semibold">Kekuatan Utama</span>
-          <span className="font-bold text-gray-800 block text-[10px] leading-tight">Berbasis Cetak Biru {profile.hdType}</span>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Inner Authority</span>
+          <p className="font-bold text-gray-900 text-sm">{profile.hdAuthority}</p>
+        </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Definition</span>
+          <p className="font-bold text-gray-900 text-sm">{profile.hdDefinition}</p>
+        </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Strategy</span>
+          <p className="font-bold text-gray-900 text-sm">{profile.hdStrategy}</p>
+        </div>
+        <div className="space-y-1">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Not-Self Theme</span>
+          <p className="font-bold text-gray-900 text-sm text-rose-400">{profile.hdNotSelfTheme}</p>
         </div>
       </div>
-      <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
-        <span className="text-indigo-400 block uppercase tracking-tighter text-[10px] mb-1 font-bold">💬 Gaya Komunikasi Utama</span>
-        <p className="text-[12px] text-indigo-900 leading-relaxed font-medium">
+
+      <div className="bg-gray-50 p-4 rounded-xl mb-6 border border-gray-100">
+        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Incarnation Cross</span>
+        <p className="text-[11px] font-medium text-gray-700 leading-tight">
+          {profile.hdIncarnationCross}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-6 pt-4 border-t border-gray-50">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-sm">☀️</div>
+          <div>
+            <span className="text-[9px] font-bold text-gray-400 uppercase block">Sun Sign</span>
+            <span className="text-xs font-bold text-gray-800">{profile.sunSign}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-sm">🏮</div>
+          <div>
+            <span className="text-[9px] font-bold text-gray-400 uppercase block">Shio</span>
+            <span className="text-xs font-bold text-gray-800">{profile.shio}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-indigo-600 p-4 rounded-2xl shadow-lg shadow-indigo-100/50">
+        <span className="text-indigo-100 block uppercase tracking-tighter text-[9px] mb-1 font-bold">💬 Gaya Komunikasi</span>
+        <p className="text-[11px] text-white leading-relaxed font-medium">
           {profile.communicationStyle}
         </p>
       </div>

@@ -11,11 +11,15 @@ export interface CosmicProfile {
   hdType: string;
   hdAuthority: string;
   hdProfile: string;
+  hdStrategy: string;
+  hdNotSelfTheme: string;
+  hdIncarnationCross: string;
+  hdDefinition: string;
   sunSign: string;
   moonSign: string;
   shio: string;
   element: string;
-  communicationStyle: string; // Updated from careerPath
+  communicationStyle: string;
 }
 
 export interface CompatibilityAnalysis {
