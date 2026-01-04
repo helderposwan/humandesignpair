@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BirthData } from '../types';
+import { BirthData } from '../types.ts';
 
 interface PersonInputProps {
   label: string;

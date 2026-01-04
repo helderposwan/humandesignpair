@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { BirthData, FullAnalysisResponse } from './types';
-import PersonInput from './components/PersonInput';
-import { getFullCosmicAnalysis } from './services/geminiService';
+import { BirthData, FullAnalysisResponse } from './types.ts';
+import PersonInput from './components/PersonInput.tsx';
+import { getFullCosmicAnalysis } from './services/geminiService.ts';
 
 const App: React.FC = () => {
   const [step, setStep] = useState<'welcome' | 'input' | 'loading' | 'results'>('welcome');
@@ -74,7 +74,7 @@ const App: React.FC = () => {
 
       <main className="flex-1 flex flex-col justify-center">
         {step === 'welcome' && (
-          <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="text-center">
             <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">🌌</span>
             </div>
@@ -179,7 +179,7 @@ const App: React.FC = () => {
 
       <footer className="mt-8 text-center text-xs text-gray-400 no-print">
         <p>© 2026 CosmicVibe. For entertainment purposes.</p>
-        <p className="mt-1">built by haze nightwalker</p>
+        <p className="mt-1 font-medium text-gray-500">built by haze nightwalker</p>
       </footer>
     </div>
   );

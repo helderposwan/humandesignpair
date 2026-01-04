@@ -1,12 +1,11 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { BirthData, FullAnalysisResponse } from "../types";
+import { BirthData, FullAnalysisResponse } from "../types.ts";
 
 /**
  * Performs a comprehensive cosmic compatibility analysis using Gemini 3 Pro
  */
 export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise<FullAnalysisResponse> => {
-  // Always initialize with the named apiKey parameter from process.env
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   const prompt = `
@@ -24,7 +23,6 @@ export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise
     Be emotionally intelligent, grounded, and insightful. Avoid heavy spiritual jargon.
   `;
 
-  // Using gemini-3-pro-preview for complex reasoning and accurate profile calculation
   const response = await ai.models.generateContent({
     model: 'gemini-3-pro-preview',
     contents: prompt,
@@ -79,7 +77,6 @@ export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise
     }
   });
 
-  // Accessing response text directly via property as per @google/genai standards
   const resultText = response.text;
   if (!resultText) {
     throw new Error("No response text received from model");
