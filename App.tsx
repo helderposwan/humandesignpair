@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { BirthData, FullAnalysisResponse } from './types.ts';
 import PersonInput from './components/PersonInput.tsx';
-import { calculateCompatibility, getZodiacSign, getShio } from './logic/compatibilityEngine.ts';
+import { getFullCosmicAnalysis } from './services/geminiService.ts';
 import { gsap } from 'gsap';
 import { TextPlugin } from 'gsap/TextPlugin';
 
@@ -10,8 +10,8 @@ gsap.registerPlugin(TextPlugin);
 
 const App: React.FC = () => {
   const [step, setStep] = useState<'welcome' | 'input' | 'loading' | 'results'>('welcome');
-  const [personA, setPersonA] = useState<any>({ name: '', date: '', hdType: '', hdAuthority: '', hdProfile: '' });
-  const [personB, setPersonB] = useState<any>({ name: '', date: '', hdType: '', hdAuthority: '', hdProfile: '' });
+  const [personA, setPersonA] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
+  const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -26,53 +26,23 @@ const App: React.FC = () => {
     }
   }, [step]);
 
-  const handleReveal = () => {
-    const required = ['name', 'date', 'hdType', 'hdAuthority', 'hdProfile'];
-    const isValA = required.every(k => personA[k]);
-    const isValB = required.every(k => personB[k]);
-
-    if (!isValA || !isValB) {
-      alert("Please fill in all Human Design details for both people.");
+  const handleReveal = async () => {
+    if (!personA.name || !personB.name || !personA.date || !personB.date || !personA.time || !personB.time) {
+      alert("Harap isi Nama, Tanggal, dan Jam lahir untuk kedua orang.");
       return;
     }
 
     setStep('loading');
-    
-    // Artificial delay for "Cosmic Drama" as per PRD
-    setTimeout(() => {
-      const shioA = getShio(personA.date);
-      const shioB = getShio(personB.date);
-      
-      const comp = calculateCompatibility(personA, personB);
-
-      const finalResult: FullAnalysisResponse = {
-        personA: {
-          ...personA,
-          sunSign: getZodiacSign(personA.date),
-          moonSign: "Check Chart", // Moon requires exact time, which we'll simplify to "Check Chart" locally
-          shio: shioA.animal,
-          element: shioA.element
-        },
-        personB: {
-          ...personB,
-          sunSign: getZodiacSign(personB.date),
-          moonSign: "Check Chart",
-          shio: shioB.animal,
-          element: shioB.element
-        },
-        compatibility: {
-          score: comp.score,
-          headline: comp.headline,
-          archetype: comp.archetype,
-          summary: comp.summary,
-          strengths: comp.strengths,
-          challenges: comp.challenges
-        }
-      };
-
-      setAnalysis(finalResult);
+    try {
+      // Menggunakan Gemini API untuk kalkulasi HD & Astrologi dari data kelahiran
+      const result = await getFullCosmicAnalysis(personA, personB);
+      setAnalysis(result);
       setStep('results');
-    }, 2000);
+    } catch (error: any) {
+      console.error("Analysis Error:", error);
+      alert("Gagal memproses data. Pastikan API_KEY sudah diset di Cloudflare dan lakukan 'Retry Deployment'.");
+      setStep('input');
+    }
   };
 
   const reset = () => {
@@ -92,6 +62,7 @@ const App: React.FC = () => {
         <div>
           <span className="text-gray-400 block uppercase tracking-tighter">Zodiac</span>
           <span className="font-semibold text-gray-700">☀️ {profile.sunSign}</span>
+          <span className="block text-gray-500">🌙 {profile.moonSign}</span>
         </div>
         <div>
           <span className="text-gray-400 block uppercase tracking-tighter">Chinese Sign</span>
@@ -120,18 +91,20 @@ const App: React.FC = () => {
             <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
               <span className="text-4xl">🌌</span>
             </div>
-            <h2 className="text-2xl font-heading font-semibold text-gray-800 mb-4 h-8 min-h-[2rem]">
-              <span ref={headingRef}></span>
-              <span className="cursor">|</span>
+            <h2 className="text-[38px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
+              <span>
+                <span ref={headingRef}></span>
+                <span className="cursor">|</span>
+              </span>
             </h2>
-            <p className="text-gray-600 mb-8 px-6 text-balance">
-              100% Client-Side Compatibility Engine. No API Key required.
+            <p className="text-gray-600 mb-10 mx-auto max-w-[260px] text-sm leading-relaxed">
+              Temukan dinamika hubunganmu melalui Human Design, Astrologi, dan Shio hanya dengan data lahir.
             </p>
             <button 
               onClick={() => setStep('input')}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
             >
-              Start Decoding
+              Mulai Analisis
             </button>
           </div>
         )}
@@ -139,22 +112,24 @@ const App: React.FC = () => {
         {step === 'input' && (
           <div className="animate-in fade-in duration-500">
             <PersonInput 
-              label="First Person" 
+              label="Orang Pertama" 
               data={personA} 
               onChange={setPersonA}
               accentColor="text-indigo-600"
+              placeholderName="Contoh: Budi Santoso"
             />
             <PersonInput 
-              label="Second Person" 
+              label="Orang Kedua" 
               data={personB} 
               onChange={setPersonB}
               accentColor="text-rose-500"
+              placeholderName="Contoh: Annisa Mutiarani"
             />
             <button 
               onClick={handleReveal}
               className="w-full bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition-all mt-4"
             >
-              Reveal Connection
+              Lihat Kecocokan
             </button>
           </div>
         )}
@@ -168,8 +143,8 @@ const App: React.FC = () => {
                 <span className="text-2xl animate-pulse">✨</span>
               </div>
             </div>
-            <h3 className="text-xl font-heading font-semibold text-gray-700 animate-pulse">Aligning Cosmic Maps...</h3>
-            <p className="text-gray-400 text-sm mt-2">Calculating local dynamics. No data is leaving your device.</p>
+            <h3 className="text-xl font-heading font-semibold text-gray-700 animate-pulse">Menghitung Peta Langit...</h3>
+            <p className="text-gray-400 text-sm mt-2">Menyinkronkan data kelahiran dengan algoritma kosmik.</p>
           </div>
         )}
 
@@ -191,7 +166,7 @@ const App: React.FC = () => {
             <ProfileCard profile={analysis.personB} color="text-rose-500" />
 
             <div className="bg-indigo-600 text-white p-6 rounded-3xl mb-6 shadow-xl shadow-indigo-100">
-              <h4 className="text-xs font-bold uppercase tracking-tighter opacity-80 mb-3">Relationship Dynamics</h4>
+              <h4 className="text-xs font-bold uppercase tracking-tighter opacity-80 mb-3">Dinamika Hubungan</h4>
               <p className="text-md leading-relaxed font-light italic">
                 "{analysis.compatibility.summary}"
               </p>
@@ -199,13 +174,13 @@ const App: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-white/50 p-4 rounded-3xl border border-white/80">
-                <h4 className="text-xs font-bold text-green-600 uppercase mb-2">Strengths</h4>
+                <h4 className="text-xs font-bold text-green-600 uppercase mb-2">Kekuatan</h4>
                 <ul className="text-[10px] text-gray-600 space-y-2">
                   {analysis.compatibility.strengths.map((s, i) => <li key={i}>• {s}</li>)}
                 </ul>
               </div>
               <div className="bg-white/50 p-4 rounded-3xl border border-white/80">
-                <h4 className="text-xs font-bold text-amber-600 uppercase mb-2">Challenges</h4>
+                <h4 className="text-xs font-bold text-amber-600 uppercase mb-2">Tantangan</h4>
                 <ul className="text-[10px] text-gray-600 space-y-2">
                   {analysis.compatibility.challenges.map((c, i) => <li key={i}>• {c}</li>)}
                 </ul>
@@ -213,15 +188,17 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex gap-4 no-print">
-              <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-2xl active:scale-95 transition-all">New Chart</button>
-              <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">Save PDF</button>
+              <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-2xl active:scale-95 transition-all">Ulangi</button>
+              <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">Simpan PDF</button>
             </div>
           </div>
         )}
       </main>
 
       <footer className="mt-8 text-center text-xs text-gray-400 no-print pb-4">
-        <p>© 2026 CosmicVibe. Built locally for your privacy.</p>
+        <p>© 2026 CosmicVibe. For entertainment purposes.</p>
+        <p className="mt-1">Build by Haze Nightwalker</p>
+        <p className="mt-1 italic text-indigo-400">Discover your cosmic blueprint and universal connection.</p>
       </footer>
     </div>
   );
