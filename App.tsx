@@ -77,7 +77,6 @@ const App: React.FC = () => {
     setIsSaving(true);
 
     try {
-      // Ensure fonts are ready
       if (document.fonts) {
         await document.fonts.ready;
       }
@@ -99,7 +98,6 @@ const App: React.FC = () => {
             el.style.display = 'block';
             el.style.visibility = 'visible';
             el.style.opacity = '1';
-            el.style.position = 'relative';
           }
         }
       });
@@ -171,31 +169,31 @@ const App: React.FC = () => {
   );
 
   const PortraitExportProfile = ({ profile, color }: { profile: any, color: string }) => (
-    <div className="bg-white p-12 rounded-[5rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
-      <header className="border-b border-gray-50 pb-8 mb-10">
-        <h4 className={`text-6xl font-heading font-black ${color} tracking-tighter leading-tight break-words`}>{profile.name}</h4>
-        <p className="text-[18px] font-bold text-gray-300 uppercase tracking-[0.3em] mt-3">Energy Blueprint</p>
+    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+      <header className="border-b border-gray-50 pb-5 mb-6">
+        <h4 className={`text-3xl font-heading font-black ${color} tracking-tighter leading-tight break-words`}>{profile.name}</h4>
+        <p className="text-[11px] font-bold text-gray-300 uppercase tracking-[0.2em] mt-1">Energy Blueprint</p>
       </header>
       
-      <div className="space-y-12 flex-1">
+      <div className="space-y-6 flex-1">
         {[
           { l: 'Type', v: profile.hdType },
           { l: 'Profile', v: profile.hdProfile },
           { l: 'Authority', v: profile.hdAuthority },
         ].map((item, i) => (
           <div key={i}>
-            <span className="text-[15px] font-bold text-gray-300 uppercase block mb-3">{item.l}</span>
-            <p className="font-bold text-gray-800 text-[36px] leading-tight break-words">{item.v}</p>
+            <span className="text-[10px] font-bold text-gray-300 uppercase block mb-1.5">{item.l}</span>
+            <p className="font-bold text-gray-900 text-[20px] leading-tight break-words">{item.v}</p>
           </div>
         ))}
-        <div className="pt-12 border-t border-gray-50 flex justify-between gap-12">
+        <div className="pt-6 border-t border-gray-50 flex justify-between gap-6">
            <div className="flex-1">
-             <span className="text-[15px] font-bold text-gray-300 uppercase block mb-2">Sun Sign</span>
-             <span className="text-[28px] font-bold text-gray-700 block leading-tight">{profile.sunSign}</span>
+             <span className="text-[10px] font-bold text-gray-300 uppercase block mb-1">Sun Sign</span>
+             <span className="text-[16px] font-bold text-gray-700 block leading-tight">{profile.sunSign}</span>
            </div>
            <div className="flex-1">
-             <span className="text-[15px] font-bold text-gray-300 uppercase block mb-2">Shio</span>
-             <span className="text-[28px] font-bold text-gray-700 block leading-tight">{profile.shio}</span>
+             <span className="text-[10px] font-bold text-gray-300 uppercase block mb-1">Shio</span>
+             <span className="text-[16px] font-bold text-gray-700 block leading-tight">{profile.shio}</span>
            </div>
         </div>
       </div>
@@ -314,12 +312,12 @@ const App: React.FC = () => {
                 {isSaving ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                    <span>Memproses Gambar...</span>
+                    <span>Memproses...</span>
                   </>
                 ) : (
                   <>
                     <span className="text-xl">📥</span>
-                    <span>Simpan Analisis (JPG)</span>
+                    <span>Simpan Hasil (JPG)</span>
                   </>
                 )}
               </button>
@@ -327,9 +325,9 @@ const App: React.FC = () => {
             </div>
 
             {/* 
-                ULTRA-PREMIUM EXPORT CONTAINER
-                Designed to be perfectly rendered at 1000px width.
-                Uses strictly relative/flex layout for absolute stability.
+                PREMIUM EXPORT SANDBOX (MATCHING ATTACHED IMAGE)
+                Width: 1000px
+                Height: Dynamic (approx 2000px based on content)
             */}
             <div 
               className="no-print"
@@ -353,78 +351,80 @@ const App: React.FC = () => {
                 }}
                 className="font-sans"
               >
-                <div className="w-full bg-white border-[30px] border-gray-50 rounded-[10rem] p-20 flex flex-col space-y-20">
+                <div className="w-full bg-white border-[2px] border-gray-50 rounded-[6rem] p-16 flex flex-col space-y-12">
                   
-                  {/* Premium Header */}
-                  <div className="flex justify-between items-center px-12 pt-8">
-                    <div className="space-y-4">
-                      <h1 className="text-9xl font-heading font-black text-gray-900 tracking-tighter leading-none">Cosmic Vibes</h1>
-                      <p className="text-indigo-400 text-3xl uppercase font-bold tracking-[0.5em]">Quantum Connection Analysis</p>
+                  {/* Logo & Header Section */}
+                  <div className="flex justify-between items-center px-4">
+                    <div className="space-y-2">
+                      <h1 className="text-7xl font-heading font-black text-[#1e293b] tracking-tighter leading-none">Cosmic Vibes</h1>
+                      <p className="text-indigo-400 text-xl uppercase font-bold tracking-[0.3em]">Quantum Synergy Report</p>
                     </div>
-                    <div className="w-40 h-40 rounded-full border-[12px] border-indigo-50 flex items-center justify-center text-8xl bg-white shadow-2xl">🌌</div>
+                    <div className="w-20 h-20 rounded-full bg-[#f8faff] shadow-sm flex items-center justify-center border border-gray-100 overflow-hidden">
+                       <span className="text-3xl">🌌</span>
+                    </div>
                   </div>
 
-                  {/* High-Impact Score Section */}
-                  <div className="bg-gray-50 rounded-[8rem] py-24 px-20 border border-gray-100 flex flex-col items-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-6 bg-gradient-to-r from-indigo-500 via-purple-600 to-rose-500"></div>
-                    <p className="text-gray-400 text-xl font-black uppercase tracking-[1em] mb-10">Synergy Score</p>
+                  {/* Compatibility Score Box */}
+                  <div className="bg-[#f8faff] rounded-[5rem] py-16 px-12 flex flex-col items-center relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-indigo-500 to-rose-400"></div>
+                    <p className="text-gray-400 text-[13px] font-black uppercase tracking-[0.5em] mb-8">Compatibility Score</p>
                     
                     <div className="flex items-baseline justify-center mb-10">
-                      <span className="text-[340px] font-heading font-black text-indigo-600 leading-none tracking-tighter">
+                      <span className="text-[260px] font-heading font-bold text-[#4f46e5] leading-none tracking-tighter">
                         {analysis.compatibility.score}
                       </span>
-                      <span className="text-9xl font-black text-indigo-400 ml-6 mb-32 opacity-80">%</span>
+                      <span className="text-7xl font-black text-[#4f46e5] ml-4 mb-20 opacity-70">%</span>
                     </div>
 
-                    <h2 className="text-8xl font-heading font-bold text-gray-800 text-center mb-14 leading-[1.1] tracking-tight max-w-[900px] whitespace-normal break-words">
+                    <h2 className="text-6xl font-heading font-bold text-[#1e293b] text-center mb-10 leading-tight tracking-tight max-w-[850px] whitespace-normal break-words">
                       {analysis.compatibility.headline}
                     </h2>
                     
-                    <div className="inline-block px-20 py-10 bg-indigo-600 text-white text-[32px] font-black rounded-full uppercase tracking-[0.3em] shadow-2xl">
+                    <div className="inline-block px-14 py-6 bg-[#4f46e5] text-white text-[18px] font-black rounded-full uppercase tracking-[0.2em] shadow-lg">
                       {analysis.compatibility.archetype}
                     </div>
                   </div>
 
-                  {/* Balanced Profile Grid */}
-                  <div className="grid grid-cols-2 gap-16">
+                  {/* Profile Cards Grid */}
+                  <div className="grid grid-cols-2 gap-10">
                     <PortraitExportProfile profile={analysis.personA} color="text-indigo-600" />
                     <PortraitExportProfile profile={analysis.personB} color="text-rose-500" />
                   </div>
 
-                  {/* Elegant Summary Verdict */}
-                  <div className="bg-gray-900 text-white p-28 rounded-[8rem] shadow-2xl flex flex-col justify-center border border-gray-800 relative min-h-[500px]">
-                    <div className="absolute top-16 left-20 opacity-10 text-[260px] leading-none font-serif text-white italic select-none">“</div>
-                    <header className="mb-14 flex items-center gap-10">
-                      <div className="w-24 h-[6px] bg-indigo-500"></div>
-                      <h4 className="text-3xl font-bold uppercase tracking-[0.9em] text-indigo-400">The Cosmic Verdict</h4>
+                  {/* Cosmic Verdict Box */}
+                  <div className="bg-[#111827] text-white p-20 rounded-[4rem] flex flex-col justify-center relative min-h-[400px]">
+                    <div className="absolute top-12 left-12 opacity-20 text-[100px] leading-none font-serif text-indigo-400 select-none rotate-12">“</div>
+                    <header className="mb-10 flex items-center gap-6">
+                      <div className="w-12 h-[2px] bg-indigo-500"></div>
+                      <h4 className="text-[14px] font-bold uppercase tracking-[0.4em] text-indigo-400">Cosmic Verdict</h4>
                     </header>
-                    <p className="text-[52px] leading-[1.6] font-light italic text-gray-100 pr-12 relative z-10 tracking-tight whitespace-normal break-words">
+                    <p className="text-[34px] leading-[1.6] font-light italic text-gray-100 pr-10 relative z-10 tracking-tight whitespace-normal break-words">
                       {analysis.compatibility.summary}
                     </p>
-                    <div className="absolute bottom-12 right-20 opacity-10 text-[260px] leading-none font-serif text-white italic rotate-180 select-none">“</div>
+                    <div className="absolute bottom-8 right-12 opacity-20 text-[100px] leading-none font-serif text-indigo-400 select-none rotate-[192deg]">“</div>
                   </div>
 
-                  {/* Clean Strength List */}
-                  <div className="bg-green-50/50 p-24 rounded-[8rem] border border-green-100/50 flex flex-col space-y-16">
-                    <header className="flex items-center justify-center gap-12">
-                      <div className="w-20 h-[3px] bg-green-200"></div>
-                      <h4 className="text-4xl font-bold text-green-700 uppercase tracking-[0.7em] flex items-center gap-10">
-                        <span className="text-6xl">✨</span> Core Strengths
+                  {/* Key Strengths Section */}
+                  <div className="bg-[#f0fdf4] p-16 rounded-[4rem] flex flex-col items-center">
+                    <header className="flex items-center gap-8 mb-10">
+                      <div className="w-12 h-[1px] bg-green-200"></div>
+                      <h4 className="text-[16px] font-bold text-green-700 uppercase tracking-[0.4em] flex items-center gap-4">
+                        <span className="text-2xl">✨</span> Pilar Kekuatan Utama
                       </h4>
-                      <div className="w-20 h-[3px] bg-green-200"></div>
+                      <div className="w-12 h-[1px] bg-green-200"></div>
                     </header>
-                    <ul className="text-[46px] text-green-900 space-y-14 font-bold flex flex-col items-center text-center px-16">
-                      {analysis.compatibility.strengths.slice(0, 5).map((s, i) => (
-                        <li key={i} className="flex items-center gap-12 leading-[1.4] max-w-[900px] whitespace-normal break-words">
-                          <span className="w-10 h-10 rounded-full bg-green-400 shrink-0 shadow-lg"></span>
+                    <ul className="text-[30px] text-green-900 space-y-8 font-bold text-center px-10">
+                      {analysis.compatibility.strengths.slice(0, 3).map((s, i) => (
+                        <li key={i} className="flex items-center gap-6 leading-tight whitespace-normal break-words">
+                          <span className="w-4 h-4 rounded-full bg-green-400 shrink-0"></span>
                           {s}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  {/* Professional Footer */}
-                  <div className="text-center text-[24px] text-gray-300 font-bold uppercase tracking-[1.8em] pt-16 pb-12 border-t border-gray-50/50">
+                  {/* Branding Footer */}
+                  <div className="text-center text-[13px] text-gray-300 font-bold uppercase tracking-[0.8em] pt-12">
                     CosmicVibes.app
                   </div>
                 </div>
