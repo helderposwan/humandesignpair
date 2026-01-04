@@ -1,14 +1,32 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BirthData, FullAnalysisResponse } from './types.ts';
 import PersonInput from './components/PersonInput.tsx';
 import { getFullCosmicAnalysis } from './services/geminiService.ts';
+import { gsap } from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
+
+// Register GSAP Plugin
+gsap.registerPlugin(TextPlugin);
 
 const App: React.FC = () => {
   const [step, setStep] = useState<'welcome' | 'input' | 'loading' | 'results'>('welcome');
   const [personA, setPersonA] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Typewriter animation effect
+  useEffect(() => {
+    if (step === 'welcome' && headingRef.current) {
+      gsap.to(headingRef.current, {
+        duration: 2,
+        text: "Unlock Your Connection",
+        ease: "none",
+        delay: 0.5
+      });
+    }
+  }, [step]);
 
   const handleReveal = async () => {
     if (!personA.name || !personB.name || !personA.date || !personB.date) {
@@ -18,12 +36,17 @@ const App: React.FC = () => {
 
     setStep('loading');
     try {
+      console.log("Initiating API call...");
       const result = await getFullCosmicAnalysis(personA, personB);
       setAnalysis(result);
       setStep('results');
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong calculating your connection. Please try again.");
+    } catch (error: any) {
+      console.error("Analysis Error:", error);
+      // Detailed error for Cloudflare deployment troubleshooting
+      const msg = error.message?.includes("API Key") 
+        ? "API Key is missing. Please set API_KEY in Cloudflare Environment Variables."
+        : error.message || "An unexpected error occurred.";
+      alert(`Error: ${msg}`);
       setStep('input');
     }
   };
@@ -38,7 +61,7 @@ const App: React.FC = () => {
   };
 
   const ProfileCard = ({ profile, color }: { profile: any, color: string }) => (
-    <div className={`bg-white p-5 rounded-3xl border border-gray-100 soft-shadow mb-4`}>
+    <div className={`bg-white p-5 rounded-3xl border border-gray-100 soft-shadow mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
       <h4 className={`text-lg font-heading font-bold ${color} mb-3`}>{profile.name}'s Profile</h4>
       <div className="grid grid-cols-2 gap-y-3 text-xs">
         <div>
@@ -65,21 +88,24 @@ const App: React.FC = () => {
 
   return (
     <div className="max-w-md mx-auto min-h-screen px-4 py-8 flex flex-col">
-      <header className="text-center mb-8">
+      <header className="text-center mb-8 no-print">
         <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-indigo-600 to-rose-500 bg-clip-text text-transparent">
           CosmicVibe HD
         </h1>
-        <p className="text-gray-500 text-sm mt-1 no-print">Universal Compatibility Decoder</p>
+        <p className="text-gray-500 text-sm mt-1">Universal Compatibility Decoder</p>
       </header>
 
       <main className="flex-1 flex flex-col justify-center">
         {step === 'welcome' && (
           <div className="text-center">
-            <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
               <span className="text-4xl">🌌</span>
             </div>
-            <h2 className="text-2xl font-heading font-semibold text-gray-800 mb-4">Unlock Your Connection</h2>
-            <p className="text-gray-600 mb-8 px-6 text-balance">
+            <h2 className="text-2xl font-heading font-semibold text-gray-800 mb-4 h-8 min-h-[2rem]">
+              <span ref={headingRef}></span>
+              <span className="cursor">|</span>
+            </h2>
+            <p className="text-gray-600 mb-8 px-6 text-balance animate-in fade-in duration-1000 delay-500">
               Find out how your birth details create a unique dynamic in Human Design, Astrology, and Shio.
             </p>
             <button 
@@ -115,7 +141,7 @@ const App: React.FC = () => {
         )}
 
         {step === 'loading' && (
-          <div className="text-center">
+          <div className="text-center animate-in fade-in">
             <div className="relative w-32 h-32 mx-auto mb-8">
               <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
               <div className="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
@@ -177,9 +203,9 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer className="mt-8 text-center text-xs text-gray-400 no-print">
+      <footer className="mt-8 text-center text-xs text-gray-400 no-print pb-4">
         <p>© 2026 CosmicVibe. For entertainment purposes.</p>
-        <p className="mt-1 font-medium text-gray-500">built by haze nightwalker</p>
+        <p className="mt-1 font-medium text-gray-500 uppercase tracking-tighter">Built by Haze Nightwalker</p>
       </footer>
     </div>
   );

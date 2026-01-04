@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Critical: Ensure process.env exists immediately for ESM modules
+        window.process = window.process || { env: {} };
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -22,62 +26,50 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
-        /* Print styles to make Save PDF work beautifully */
+        /* Print styles */
         @media print {
-            body {
-                background: white !important;
-                padding: 0 !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            #root {
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-                max-width: none !important;
-            }
-            .max-w-md {
-                max-width: none !important;
-            }
-            .rounded-\[2\.5rem\], .rounded-3xl {
-                border: 1px solid #eee !important;
-                border-radius: 1rem !important;
-                box-shadow: none !important;
-            }
-            header h1 {
-                font-size: 2rem !important;
-                color: black !important;
-                background: none !important;
-                -webkit-text-fill-color: initial !important;
-            }
-            .bg-indigo-600 {
-                background-color: #4f46e5 !important;
-                color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
-            .bg-white {
-                background-color: white !important;
-                -webkit-print-color-adjust: exact;
-            }
+            body { background: white !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            #root { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
+            .max-w-md { max-width: none !important; }
+            .rounded-\[2\.5rem\], .rounded-3xl { border: 1px solid #eee !important; border-radius: 1rem !important; box-shadow: none !important; }
+            header h1 { font-size: 2rem !important; color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
+            .bg-indigo-600 { background-color: #4f46e5 !important; color: white !important; -webkit-print-color-adjust: exact; }
+            .bg-white { background-color: white !important; -webkit-print-color-adjust: exact; }
+        }
+
+        /* Cursor effect for typewriter */
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            background-color: #4f46e5;
+            margin-left: 2px;
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
-    "react": "https://esm.sh/react@^19.2.3",
-    "react-dom": "https://esm.sh/react-dom@^19.2.3",
-    "react-dom/client": "https://esm.sh/react-dom@^19.2.3/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.34.0",
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/TextPlugin": "https://esm.sh/gsap@3.12.5/TextPlugin",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "gsap/": "https://esm.sh/gsap@^3.14.2/"
   }
 }
 </script>
 </head>
 <body>
     <div id="root"></div>
-    <!-- Explicitly import index.tsx as a module -->
     <script type="module" src="./index.tsx"></script>
 </body>
 </html>
