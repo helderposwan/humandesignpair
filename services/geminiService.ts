@@ -9,12 +9,9 @@ export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise
   // Obtain API key exclusively from process.env as per requirements
   const apiKey = process.env.API_KEY;
   
-  if (!apiKey) {
-    throw new Error("API Key is missing from the environment. Please check your deployment settings.");
-  }
-
   // Create instance right before making the call to ensure it uses the most up-to-date config
-  const ai = new GoogleGenAI({ apiKey });
+  // We cast to string to satisfy type requirements; the SDK will handle invalid/missing keys.
+  const ai = new GoogleGenAI({ apiKey: apiKey as string });
   
   const prompt = `
     Analyze the birth details of two people and provide a detailed Human Design and Astrological compatibility report.

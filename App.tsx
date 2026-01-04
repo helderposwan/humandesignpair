@@ -9,12 +9,42 @@ import { TextPlugin } from 'gsap/TextPlugin';
 // Register GSAP Plugin
 gsap.registerPlugin(TextPlugin);
 
+// Type definition for aistudio window global
+// Defining AIStudio interface to match the existing global property type and avoid redeclaration errors
+declare global {
+  interface AIStudio {
+    hasSelectedApiKey: () => Promise<boolean>;
+    openSelectKey: () => Promise<void>;
+  }
+
+  interface Window {
+    aistudio?: AIStudio;
+  }
+}
+
 const App: React.FC = () => {
   const [step, setStep] = useState<'welcome' | 'input' | 'loading' | 'results'>('welcome');
   const [personA, setPersonA] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
+  const [needsKeySetup, setNeedsKeySetup] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Check for API key on load
+  useEffect(() => {
+    const checkKey = async () => {
+      const hasEnvKey = !!process.env.API_KEY;
+      if (!hasEnvKey && window.aistudio) {
+        const selected = await window.aistudio.hasSelectedApiKey();
+        setNeedsKeySetup(!selected);
+      } else if (!hasEnvKey) {
+        // Fallback: If no env key and no aistudio helper, we might still fail later
+        // but we let the user proceed just in case.
+        setNeedsKeySetup(true);
+      }
+    };
+    checkKey();
+  }, []);
 
   // Typewriter animation effect
   useEffect(() => {
@@ -27,6 +57,15 @@ const App: React.FC = () => {
       });
     }
   }, [step]);
+
+  const handleOpenKeySelector = async () => {
+    if (window.aistudio) {
+      await window.aistudio.openSelectKey();
+      setNeedsKeySetup(false);
+    } else {
+      alert("Please ensure the API_KEY environment variable is set in your Cloudflare dashboard.");
+    }
+  };
 
   const handleReveal = async () => {
     if (!personA.name || !personB.name || !personA.date || !personB.date) {
@@ -42,10 +81,16 @@ const App: React.FC = () => {
       setStep('results');
     } catch (error: any) {
       console.error("Analysis Error:", error);
-      // Detailed error for Cloudflare deployment troubleshooting
-      const msg = error.message?.includes("API Key") 
-        ? "API Key is missing. Please set API_KEY in Cloudflare Environment Variables."
-        : error.message || "An unexpected error occurred.";
+      
+      // Handle the case where the entity was not found (often key related)
+      if (error.message?.includes("Requested entity was not found") && window.aistudio) {
+        alert("API Key error. Please re-select your key.");
+        await window.aistudio.openSelectKey();
+        setStep('input');
+        return;
+      }
+
+      const msg = error.message || "An unexpected error occurred.";
       alert(`Error: ${msg}`);
       setStep('input');
     }
@@ -108,12 +153,28 @@ const App: React.FC = () => {
             <p className="text-gray-600 mb-8 px-6 text-balance animate-in fade-in duration-1000 delay-500">
               Find out how your birth details create a unique dynamic in Human Design, Astrology, and Shio.
             </p>
-            <button 
-              onClick={() => setStep('input')}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
-            >
-              Start Decoding
-            </button>
+            
+            {needsKeySetup ? (
+              <div className="space-y-4">
+                <p className="text-xs text-rose-500 font-medium bg-rose-50 py-2 rounded-lg">API Key required for activation</p>
+                <button 
+                  onClick={handleOpenKeySelector}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg active:scale-95"
+                >
+                  Set up API Key
+                </button>
+                <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="block text-[10px] text-gray-400 hover:underline">
+                  Learn about Gemini API billing
+                </a>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setStep('input')}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
+              >
+                Start Decoding
+              </button>
+            )}
           </div>
         )}
 
