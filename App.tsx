@@ -76,20 +76,26 @@ const App: React.FC = () => {
     
     setIsSaving(true);
     const element = exportRef.current;
-    const fileName = `Cosmic_Analysis_${analysis.personA.name}_${analysis.personB.name}.jpg`;
+    const fileName = `Cosmic_Report_${analysis.personA.name}_${analysis.personB.name}.jpg`;
 
-    // We use a specific windowWidth to ensure media queries or layout shifts 
-    // based on the user's actual device screen size don't affect the 1000px fixed layout.
+    // Memastikan font dimuat sebelum capture (opsional tapi membantu konsistensi)
     // @ts-ignore
     window.html2canvas(element, {
       scale: 2, 
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
-      windowWidth: 1000, 
+      // windowWidth memastikan media queries tailwind menggunakan breakpoint yang konsisten saat capture
+      windowWidth: 1000,
       onclone: (clonedDoc: Document) => {
         const el = clonedDoc.getElementById('export-container');
-        if (el) el.style.left = '0';
+        if (el) {
+          el.style.display = 'block';
+          el.style.opacity = '1';
+          el.style.position = 'relative';
+          el.style.left = '0';
+          el.style.top = '0';
+        }
       }
     }).then((canvas: HTMLCanvasElement) => {
       const link = document.createElement('a');
@@ -98,9 +104,9 @@ const App: React.FC = () => {
       link.click();
       setIsSaving(false);
     }).catch((err: any) => {
-      console.error(err);
+      console.error("Save error:", err);
       setIsSaving(false);
-      alert("Gagal menyimpan gambar.");
+      alert("Gagal menyimpan gambar. Silakan coba lagi.");
     });
   };
 
@@ -110,7 +116,7 @@ const App: React.FC = () => {
   };
 
   const DetailedProfileCard = ({ profile, color }: { profile: any, color: string }) => (
-    <div className={`bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-6 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+    <div className={`bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-6`}>
       <header className="border-b border-gray-50 pb-4 mb-6">
         <h4 className={`text-xl font-heading font-extrabold ${color} tracking-tight`}>{profile.name}</h4>
         <div className="flex items-center gap-2 mt-1">
@@ -159,8 +165,8 @@ const App: React.FC = () => {
   );
 
   const PortraitExportProfile = ({ profile, color }: { profile: any, color: string }) => (
-    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
-      <header className="border-b border-gray-50 pb-5 mb-6">
+    <div className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+      <header className="border-b border-gray-100 pb-5 mb-6">
         <h4 className={`text-4xl font-heading font-black ${color} truncate tracking-tighter`}>{profile.name}</h4>
         <p className="text-[12px] font-bold text-gray-300 uppercase tracking-[0.2em] mt-1">Energy Blueprint</p>
       </header>
@@ -173,7 +179,7 @@ const App: React.FC = () => {
         ].map((item, i) => (
           <div key={i}>
             <span className="text-[11px] font-bold text-gray-300 uppercase block mb-1.5">{item.l}</span>
-            <p className="font-bold text-gray-800 text-[22px] leading-tight truncate">{item.v}</p>
+            <p className="font-bold text-gray-800 text-[22px] leading-tight break-words">{item.v}</p>
           </div>
         ))}
         <div className="pt-6 border-t border-gray-50 flex justify-between gap-4">
@@ -299,31 +305,32 @@ const App: React.FC = () => {
                 disabled={isSaving}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                {isSaving ? "Menyiapkan Gambar..." : "📥 Simpan Analisis (JPG)"}
+                {isSaving ? "Menyiapkan Gambar..." : "📥 Simpan Hasil (JPG)"}
               </button>
               <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl text-sm font-bold">Analisis Lagi</button>
             </div>
 
-            {/* HIGH-PRECISION DYNAMIC EXPORT TEMPLATE */}
-            {/* Forced width of 1000px ensures consistent internal sizing regardless of device screen width. */}
+            {/* TEMPLATE EXPORT - TETAP DI RENDER TAPI TIDAK TERLIHAT (OPACITY 0) */}
+            {/* Ini memastikan browser menghitung layout dengan benar di lingkungan produksi seperti Cloudflare */}
             <div 
               id="export-container"
               ref={exportRef} 
               style={{ 
-                position: 'absolute', 
-                left: '-9999px', 
+                position: 'fixed', 
+                top: '0', 
+                left: '0',
                 width: '1000px', 
                 backgroundColor: '#ffffff',
-                padding: '40px',
-                display: 'block',
-                zIndex: -1
+                opacity: 0,
+                pointerEvents: 'none',
+                zIndex: -50,
               }}
               className="font-sans"
             >
-              <div className="w-full bg-white border-[24px] border-gray-50 rounded-[6rem] p-12 flex flex-col space-y-12">
+              <div className="w-full bg-white border-[20px] border-gray-50 rounded-[6rem] p-12 flex flex-col space-y-12">
                 
-                {/* Header */}
-                <div className="flex justify-between items-center px-6 pt-4">
+                {/* Header Clean */}
+                <div className="flex justify-between items-center px-6 pt-6">
                   <div>
                     <h1 className="text-7xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
                     <p className="text-indigo-400 text-xl uppercase font-bold tracking-[0.4em] mt-3">Quantum Synergy Report</p>
@@ -331,7 +338,7 @@ const App: React.FC = () => {
                   <div className="w-24 h-24 rounded-full border-[8px] border-indigo-50 flex items-center justify-center text-5xl bg-white shadow-xl">🌌</div>
                 </div>
 
-                {/* Score Hero - Full Width Focus */}
+                {/* Score Hero - Pusat Informasi Utama */}
                 <div className="text-center bg-gray-50 rounded-[5rem] py-14 px-12 border border-gray-100 relative overflow-hidden shadow-sm flex flex-col items-center">
                   <div className="absolute top-0 left-0 w-full h-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500"></div>
                   <p className="text-gray-400 text-sm font-black uppercase tracking-[0.6em] mb-4">Compatibility Score</p>
@@ -352,27 +359,27 @@ const App: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Profiles Grid - Vertical for Mobile Clarity or Robust Grid */}
-                <div className="grid grid-cols-2 gap-10 min-h-[500px]">
+                {/* Profiles Row */}
+                <div className="grid grid-cols-2 gap-10">
                   <PortraitExportProfile profile={analysis.personA} color="text-indigo-600" />
                   <PortraitExportProfile profile={analysis.personB} color="text-rose-500" />
                 </div>
 
-                {/* Cosmic Verdict - THE SUMMARY - Dynamic Height & Auto-Wrap */}
+                {/* Cosmic Verdict - Ringkasan summary dinamis */}
                 <div className="bg-gray-900 text-white p-16 rounded-[5rem] shadow-2xl flex flex-col justify-center border border-gray-800 relative">
-                  <div className="absolute top-10 left-12 opacity-10 text-[140px] leading-none font-serif text-white italic select-none">“</div>
-                  <header className="mb-6 flex items-center gap-6">
+                  <div className="absolute top-10 left-12 opacity-10 text-[140px] leading-none font-serif text-white italic">“</div>
+                  <header className="mb-8 flex items-center gap-6">
                     <div className="w-16 h-[3px] bg-indigo-500"></div>
                     <h4 className="text-lg font-bold uppercase tracking-[0.7em] text-indigo-400">Cosmic Verdict</h4>
                   </header>
-                  <p className="text-[34px] leading-[1.5] font-light italic text-gray-100 pr-4 relative z-10 tracking-tight whitespace-normal break-words">
+                  <p className="text-[36px] leading-[1.5] font-light italic text-gray-100 pr-6 relative z-10 tracking-tight whitespace-normal break-words">
                     {analysis.compatibility.summary}
                   </p>
-                  <div className="absolute bottom-6 right-12 opacity-10 text-[140px] leading-none font-serif text-white italic rotate-180 select-none">“</div>
+                  <div className="absolute bottom-6 right-12 opacity-10 text-[140px] leading-none font-serif text-white italic rotate-180">“</div>
                 </div>
 
-                {/* Strengths List - Robust Vertical Layout */}
-                <div className="bg-green-50 p-14 rounded-[5rem] border border-green-100 flex flex-col space-y-10">
+                {/* Kekuatan Utama */}
+                <div className="bg-green-50 p-16 rounded-[5rem] border border-green-100 flex flex-col space-y-10">
                   <header className="flex items-center justify-center gap-6">
                     <div className="w-12 h-[1px] bg-green-200"></div>
                     <h4 className="text-2xl font-bold text-green-700 uppercase tracking-[0.5em] flex items-center gap-5">
@@ -380,7 +387,7 @@ const App: React.FC = () => {
                     </h4>
                     <div className="w-12 h-[1px] bg-green-200"></div>
                   </header>
-                  <ul className="text-[30px] text-green-900 space-y-8 font-bold flex flex-col items-center text-center px-10">
+                  <ul className="text-[32px] text-green-900 space-y-8 font-bold flex flex-col items-center text-center px-10">
                     {analysis.compatibility.strengths.slice(0, 5).map((s, i) => (
                       <li key={i} className="flex items-center gap-6 leading-[1.3] max-w-[850px] break-words">
                         <span className="w-5 h-5 rounded-full bg-green-400 shrink-0 shadow-sm"></span>
@@ -390,9 +397,9 @@ const App: React.FC = () => {
                   </ul>
                 </div>
 
-                {/* Branding Footer (Tiny and Clean) */}
-                <div className="text-center text-[14px] text-gray-300 font-bold uppercase tracking-[1.2em] pt-4 pb-4">
-                  CosmicVibes.app • Built with Quantum Analytics
+                {/* Branding footer mungil */}
+                <div className="text-center text-[14px] text-gray-300 font-bold uppercase tracking-[1.2em] pt-4 pb-6">
+                  CosmicVibes.app
                 </div>
               </div>
             </div>
