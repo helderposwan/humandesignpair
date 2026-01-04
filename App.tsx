@@ -76,16 +76,16 @@ const App: React.FC = () => {
     
     setIsSaving(true);
     const element = exportRef.current;
-    const fileName = `Cosmic_Pairing_${analysis.personA.name}_&_${analysis.personB.name}.jpg`;
+    const fileName = `Cosmic_Verdict_${analysis.personA.name}_${analysis.personB.name}.jpg`;
 
     // @ts-ignore
     window.html2canvas(element, {
       scale: 2, 
       useCORS: true,
-      backgroundColor: '#fdfcfb',
+      backgroundColor: '#ffffff',
       logging: false,
-      width: 1000,
-      height: 1250, 
+      width: 1080,
+      height: 1920, 
     }).then((canvas: HTMLCanvasElement) => {
       const link = document.createElement('a');
       link.download = fileName;
@@ -95,7 +95,7 @@ const App: React.FC = () => {
     }).catch((err: any) => {
       console.error(err);
       setIsSaving(false);
-      alert("Gagal menyimpan.");
+      alert("Gagal menyimpan gambar.");
     });
   };
 
@@ -154,32 +154,31 @@ const App: React.FC = () => {
   );
 
   const PortraitExportProfile = ({ profile, color }: { profile: any, color: string }) => (
-    <div className="bg-white p-6 rounded-[2.5rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
-      <header className="border-b border-gray-50 pb-3 mb-4">
-        <h4 className={`text-xl font-heading font-black ${color} truncate`}>{profile.name}</h4>
-        <p className="text-[9px] font-bold text-gray-300 uppercase tracking-widest mt-0.5">Energy Profile</p>
+    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+      <header className="border-b border-gray-50 pb-4 mb-4">
+        <h4 className={`text-2xl font-heading font-black ${color} truncate`}>{profile.name}</h4>
+        <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-0.5">Energy Blueprint</p>
       </header>
       
-      <div className="space-y-3 flex-1">
+      <div className="space-y-4 flex-1">
         {[
           { l: 'Type', v: profile.hdType },
           { l: 'Profile', v: profile.hdProfile },
           { l: 'Authority', v: profile.hdAuthority },
-          { l: 'Definition', v: profile.hdDefinition },
         ].map((item, i) => (
-          <div key={i} className="min-w-0">
-            <span className="text-[8px] font-bold text-gray-300 uppercase block mb-0.5">{item.l}</span>
-            <p className="font-bold text-gray-800 text-[12px] leading-tight truncate">{item.v}</p>
+          <div key={i}>
+            <span className="text-[9px] font-bold text-gray-300 uppercase block mb-0.5">{item.l}</span>
+            <p className="font-bold text-gray-800 text-[14px] leading-tight truncate">{item.v}</p>
           </div>
         ))}
-        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50">
+        <div className="pt-3 border-t border-gray-50 flex justify-between">
            <div>
-             <span className="text-[8px] font-bold text-gray-300 uppercase block">Sun</span>
-             <span className="text-[10px] font-bold text-gray-600">{profile.sunSign}</span>
+             <span className="text-[9px] font-bold text-gray-300 uppercase block">Sun Sign</span>
+             <span className="text-[12px] font-bold text-gray-600">{profile.sunSign}</span>
            </div>
            <div>
-             <span className="text-[8px] font-bold text-gray-300 uppercase block">Shio</span>
-             <span className="text-[10px] font-bold text-gray-600">{profile.shio}</span>
+             <span className="text-[9px] font-bold text-gray-300 uppercase block">Shio</span>
+             <span className="text-[12px] font-bold text-gray-600">{profile.shio}</span>
            </div>
         </div>
       </div>
@@ -295,77 +294,84 @@ const App: React.FC = () => {
                 disabled={isSaving}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                {isSaving ? "Menyimpan..." : "📥 Simpan Hasil"}
+                {isSaving ? "Menyiapkan Gambar..." : "📥 Simpan Hasil"}
               </button>
               <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl text-sm font-bold">Analisis Lagi</button>
             </div>
 
-            {/* EXPORT TEMPLATE (4:5 - 1000x1250) */}
+            {/* EXPORT TEMPLATE - Optimized for IG Story (9:16 - 1080x1920) */}
             <div 
               ref={exportRef} 
               style={{ 
                 position: 'absolute', 
                 left: '-9999px', 
-                width: '1000px', 
-                height: '1250px', 
-                backgroundColor: '#fdfcfb',
-                padding: '40px',
+                width: '1080px', 
+                height: '1920px', 
+                backgroundColor: '#ffffff',
+                padding: '60px',
                 overflow: 'hidden'
               }}
               className="font-sans"
             >
-              <div className="h-full bg-white rounded-[4rem] border border-gray-200 shadow-2xl p-12 flex flex-col relative space-y-4">
-                <div className="flex justify-between items-center px-4 pt-2">
+              <div className="h-full w-full bg-white border-[24px] border-gray-50 rounded-[6rem] p-16 flex flex-col relative space-y-12">
+                
+                {/* Header Section */}
+                <div className="flex justify-between items-center pt-4">
                   <div>
-                    <h1 className="text-5xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
-                    <p className="text-indigo-400 text-[10px] uppercase font-bold tracking-[0.5em] mt-1">Auth Code: CV-{(analysis.compatibility.score * 1234).toString(16).toUpperCase()}</p>
+                    <h1 className="text-6xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
+                    <p className="text-indigo-400 text-sm uppercase font-bold tracking-[0.5em] mt-2">Quantum Synergy Report</p>
                   </div>
-                  <div className="w-16 h-16 rounded-full border-[4px] border-indigo-50 flex items-center justify-center text-3xl bg-white shadow-inner">🌌</div>
+                  <div className="w-24 h-24 rounded-full border-[6px] border-indigo-50 flex items-center justify-center text-5xl bg-white shadow-xl">🌌</div>
                 </div>
 
-                {/* Score Hero Area - Prominent and Bold */}
-                <div className="text-center bg-gray-50 rounded-[3.5rem] py-8 px-8 border border-gray-100 relative overflow-hidden shadow-sm">
-                  <div className="text-[180px] font-heading font-black text-indigo-600 leading-none -mb-4 tracking-tighter flex items-center justify-center">
-                    {analysis.compatibility.score}<span className="text-6xl mb-12 ml-2 opacity-80">%</span>
+                {/* Score Section - Massive Visual Impact */}
+                <div className="text-center bg-gray-50 rounded-[5rem] py-16 px-12 border border-gray-100 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-rose-500"></div>
+                  <p className="text-gray-400 text-xs font-black uppercase tracking-[0.4em] mb-4">Compatibility Score</p>
+                  <div className="text-[260px] font-heading font-black text-indigo-600 leading-none -mb-6 tracking-tighter flex items-center justify-center">
+                    {analysis.compatibility.score}<span className="text-7xl mb-24 ml-4 opacity-70">%</span>
                   </div>
-                  <h2 className="text-3xl font-heading font-bold text-gray-800 mb-3">{analysis.compatibility.headline}</h2>
-                  <span className="px-8 py-2.5 bg-indigo-600 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200">
+                  <h2 className="text-5xl font-heading font-bold text-gray-800 mb-6 leading-tight">{analysis.compatibility.headline}</h2>
+                  <div className="inline-block px-12 py-4 bg-indigo-600 text-white text-[16px] font-black rounded-full uppercase tracking-widest shadow-2xl shadow-indigo-200">
                     {analysis.compatibility.archetype}
-                  </span>
+                  </div>
                 </div>
 
-                {/* Profiles Row */}
-                <div className="grid grid-cols-2 gap-6 h-[320px]">
+                {/* Profiles Grid */}
+                <div className="grid grid-cols-2 gap-10 h-[450px]">
                   <PortraitExportProfile profile={analysis.personA} color="text-indigo-600" />
                   <PortraitExportProfile profile={analysis.personB} color="text-rose-500" />
                 </div>
 
-                {/* Summary Box */}
-                <div className="bg-gray-900 text-white p-8 rounded-[3rem] shadow-2xl flex flex-col justify-center border border-gray-800">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-indigo-400 mb-2 border-b border-white/10 pb-1">Esensi Koneksi</h4>
-                  <p className="text-[17px] leading-relaxed font-light italic text-gray-100">
+                {/* Cosmic Verdict - The Story Summary */}
+                <div className="bg-gray-900 text-white p-14 rounded-[5rem] shadow-2xl flex flex-col justify-center border border-gray-800 min-h-[350px]">
+                  <header className="mb-6 flex items-center gap-4">
+                    <div className="w-10 h-1 bg-indigo-500"></div>
+                    <h4 className="text-xs font-bold uppercase tracking-[0.5em] text-indigo-400">Cosmic Verdict</h4>
+                  </header>
+                  <p className="text-[28px] leading-[1.3] font-light italic text-gray-100">
                     "{analysis.compatibility.summary}"
                   </p>
                 </div>
 
-                {/* Strengths Section - Full Width, Adaptive Large Text (Refined Spacing) */}
-                <div className="bg-green-50 p-10 rounded-[3.5rem] border border-green-100 flex flex-col flex-1 min-h-0 justify-center">
-                  <header className="mb-4 flex items-center justify-center gap-3">
-                    <div className="h-[2px] w-8 bg-green-200"></div>
-                    <h4 className="text-[12px] font-bold text-green-700 uppercase tracking-[0.3em] flex items-center gap-2">Pilar Kekuatan Utama</h4>
-                    <div className="h-[2px] w-8 bg-green-200"></div>
+                {/* Strengths - Final Positive Reinforcement */}
+                <div className="bg-green-50 p-14 rounded-[5rem] border border-green-100 flex flex-col flex-1 justify-center">
+                  <header className="mb-10 flex items-center justify-center gap-4">
+                    <h4 className="text-sm font-bold text-green-700 uppercase tracking-[0.4em] flex items-center gap-3">
+                      <span className="text-2xl">✅</span> Pilar Kekuatan Utama
+                    </h4>
                   </header>
-                  <ul className="text-[22px] text-green-900 space-y-4 font-bold flex flex-col items-center text-center">
-                    {analysis.compatibility.strengths.slice(0, 4).map((s, i) => (
-                      <li key={i} className="flex items-center gap-3 leading-[1.15] max-w-[820px]">
-                        <span className="w-2.5 h-2.5 rounded-full bg-green-400 shrink-0"></span>
+                  <ul className="text-[26px] text-green-900 space-y-8 font-bold flex flex-col items-center text-center">
+                    {analysis.compatibility.strengths.slice(0, 3).map((s, i) => (
+                      <li key={i} className="flex items-center gap-4 leading-[1.1] max-w-[900px]">
+                        <span className="w-3 h-3 rounded-full bg-green-400 shrink-0"></span>
                         {s}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Footer Section (Added back for completeness) */}
+                {/* Branding Footer */}
               </div>
             </div>
           </div>
