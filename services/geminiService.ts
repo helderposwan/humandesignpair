@@ -6,11 +6,11 @@ import { BirthData, FullAnalysisResponse } from "../types.ts";
  * Performs a comprehensive cosmic compatibility analysis using Gemini 3 Flash
  */
 export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise<FullAnalysisResponse> => {
-  // Obtain API key exclusively from process.env as per requirements
-  const apiKey = process.env.API_KEY;
+  // Obtain API key exclusively from process.env
+  // Added fallback for "API_Key" as seen in user's Cloudflare screenshot
+  const apiKey = process.env.API_KEY || (process.env as any).API_Key;
   
-  // Create instance right before making the call to ensure it uses the most up-to-date config
-  // We cast to string to satisfy type requirements; the SDK will handle invalid/missing keys.
+  // Create instance right before making the call
   const ai = new GoogleGenAI({ apiKey: apiKey as string });
   
   const prompt = `

@@ -10,7 +10,6 @@ import { TextPlugin } from 'gsap/TextPlugin';
 gsap.registerPlugin(TextPlugin);
 
 // Type definition for aistudio window global
-// Defining AIStudio interface to match the existing global property type and avoid redeclaration errors
 declare global {
   interface AIStudio {
     hasSelectedApiKey: () => Promise<boolean>;
@@ -33,13 +32,15 @@ const App: React.FC = () => {
   // Check for API key on load
   useEffect(() => {
     const checkKey = async () => {
-      const hasEnvKey = !!process.env.API_KEY;
-      if (!hasEnvKey && window.aistudio) {
+      // Look for both variants to be safe
+      const hasEnvKey = !!process.env.API_KEY || !!(process.env as any).API_Key;
+      
+      if (hasEnvKey) {
+        setNeedsKeySetup(false);
+      } else if (window.aistudio) {
         const selected = await window.aistudio.hasSelectedApiKey();
         setNeedsKeySetup(!selected);
-      } else if (!hasEnvKey) {
-        // Fallback: If no env key and no aistudio helper, we might still fail later
-        // but we let the user proceed just in case.
+      } else {
         setNeedsKeySetup(true);
       }
     };
@@ -82,7 +83,6 @@ const App: React.FC = () => {
     } catch (error: any) {
       console.error("Analysis Error:", error);
       
-      // Handle the case where the entity was not found (often key related)
       if (error.message?.includes("Requested entity was not found") && window.aistudio) {
         alert("API Key error. Please re-select your key.");
         await window.aistudio.openSelectKey();
