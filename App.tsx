@@ -20,12 +20,32 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (step === 'welcome' && headingRef.current) {
-      gsap.to(headingRef.current, {
-        duration: 2,
-        text: "Buka Rahasia Koneksi Anda",
-        ease: "none",
-        delay: 0.5
+      const phrases = [
+        "Buka rahasia koneksi dengan pasanganmu.",
+        "Temukan harmoni energi kalian berdua.",
+        "Ungkap kecocokan jiwa lewat Human Design."
+      ];
+      
+      const tl = gsap.timeline({ repeat: -1 });
+      
+      phrases.forEach((phrase) => {
+        tl.to(headingRef.current, {
+          duration: 2.5,
+          text: phrase,
+          ease: "none",
+        })
+        .to({}, { duration: 2 }) // Pause at end of phrase
+        .to(headingRef.current, {
+          duration: 1,
+          text: "",
+          ease: "none",
+        })
+        .to({}, { duration: 0.5 }); // Short pause before next phrase
       });
+
+      return () => {
+        tl.kill();
+      };
     }
   }, [step]);
 
@@ -133,7 +153,7 @@ const App: React.FC = () => {
             <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm animate-bounce">
               <span className="text-4xl">🌌</span>
             </div>
-            <h2 className="text-[32px] sm:text-[38px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
+            <h2 className="text-[28px] sm:text-[34px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-28 flex items-center justify-center">
               <span>
                 <span ref={headingRef}></span>
                 <span className="cursor">|</span>
