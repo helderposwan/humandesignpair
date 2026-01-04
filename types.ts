@@ -15,6 +15,7 @@ export interface CosmicProfile {
   moonSign: string;
   shio: string;
   element: string;
+  careerPath: string; // New: Best career path
 }
 
 export interface CompatibilityAnalysis {
@@ -24,6 +25,7 @@ export interface CompatibilityAnalysis {
   summary: string;
   strengths: string[];
   challenges: string[];
+  communicationAdvice: string; // New: Communication style advice
 }
 
 export interface FullAnalysisResponse {
@@ -80,4 +82,5 @@ export interface CompatibilityResult {
   strengths: string[];
   challenges: string[];
   advice: string;
+  communicationAdvice?: string;
 }

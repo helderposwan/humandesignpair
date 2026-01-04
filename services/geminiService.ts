@@ -2,14 +2,9 @@
 import { BirthData, FullAnalysisResponse } from "../types.ts";
 import { getZodiacSign, getShio, getMockHDData, calculateCompatibility } from "../logic/compatibilityEngine.ts";
 
-/**
- * Menghasilkan analisis kompatibilitas kosmik secara lokal.
- * Tidak lagi menggunakan Gemini API untuk menghindari masalah API Key.
- */
 export const getFullCosmicAnalysis = async (aData: BirthData, bData: BirthData): Promise<FullAnalysisResponse> => {
-  // 1. Kalkulasi data deterministik (Human Design, Zodiac, Shio)
-  const personA_HD = getMockHDData(aData.date);
-  const personB_HD = getMockHDData(bData.date);
+  const personA_HD = getMockHDData(aData.date, aData.name);
+  const personB_HD = getMockHDData(bData.date, bData.name);
   const shioA = getShio(aData.date);
   const shioB = getShio(bData.date);
 
@@ -17,45 +12,43 @@ export const getFullCosmicAnalysis = async (aData: BirthData, bData: BirthData):
     name: aData.name,
     ...personA_HD,
     sunSign: getZodiacSign(aData.date),
-    moonSign: "Mystic Moon", 
+    moonSign: "Bulan Mistik", 
     shio: shioA.animal,
-    element: shioA.element
+    element: shioA.element,
   };
 
   const personB = {
     name: bData.name,
     ...personB_HD,
     sunSign: getZodiacSign(bData.date),
-    moonSign: "Mystic Moon",
+    moonSign: "Bulan Mistik",
     shio: shioB.animal,
-    element: shioB.element
+    element: shioB.element,
   };
 
-  // 2. Kalkulasi skor dan metadata kompatibilitas
   const baseComp = calculateCompatibility(personA, personB);
-
-  // 3. Menghasilkan "Emotional Tone Summary" secara lokal berdasarkan skor
-  // Simulasi "AI Phrasing" dengan template yang berkualitas
-  let summary = "";
   const score = baseComp.score;
 
-  if (score >= 85) {
-    summary = `Hubungan antara ${personA.name} dan ${personB.name} adalah resonansi jiwa yang langka. Energi kalian saling menguatkan, menciptakan aliran alami di mana dukungan terasa tanpa usaha. Ini adalah kemitraan yang dibangun di atas pemahaman kosmik yang mendalam.`;
-  } else if (score >= 70) {
-    summary = `${personA.name} dan ${personB.name} memiliki dinamika yang sangat produktif. Ada keseimbangan antara memberikan arahan dan memberikan energi. Tantangan kecil mungkin muncul, namun fondasi kalian cukup kuat untuk mengubah gesekan menjadi pertumbuhan kreatif.`;
-  } else if (score >= 50) {
-    summary = `Kalian berdua membawa perspektif yang sangat berbeda ke dalam hubungan ini. Meskipun membutuhkan waktu untuk sinkronisasi, perbedaan ini justru menjadi kekuatan jika kalian saling menghargai ritme unik masing-masing. Komunikasi adalah kunci evolusi kalian.`;
+  // Narasi yang lebih dinamis berdasarkan skor dan elemen
+  let summary = "";
+  if (score >= 90) {
+    summary = `Koneksi antara ${personA.name} dan ${personB.name} adalah manifestasi dari harmoni tingkat tinggi. Kalian tidak hanya saling melengkapi secara energi, tetapi juga memiliki visi jiwa yang selaras. Elemen ${personA.element} dan ${personB.element} kalian berinteraksi menciptakan katalisator bagi kesuksesan bersama.`;
+  } else if (score >= 75) {
+    summary = `${personA.name} dan ${personB.name} memiliki fondasi yang sangat kuat untuk hubungan jangka panjang. Dinamika antara ${personA.hdType} dan ${personB.hdType} memberikan keseimbangan antara aksi dan refleksi. Kalian akan menemukan bahwa tantangan justru memperkuat ikatan emosional kalian.`;
+  } else if (score >= 60) {
+    summary = `Hubungan ini menawarkan ruang pertumbuhan yang signifikan bagi ${personA.name} dan ${personB.name}. Meskipun ada perbedaan mendasar dalam ritme, kalian memiliki cukup banyak titik temu untuk membangun sesuatu yang berarti. Fokuslah pada transparansi gaya komunikasi untuk menghindari kesalahpahaman.`;
+  } else if (score >= 40) {
+    summary = `Kalian berdua berada dalam fase belajar tentang keragaman energi. ${personA.name} membawa perspektif ${personA.element}, sementara ${personB.name} membawa stabilitas ${personB.element}. Dibutuhkan komitmen untuk tidak saling mengubah, melainkan merayakan perbedaan sebagai aset unik.`;
   } else {
-    summary = `Hubungan ini adalah ruang pembelajaran yang intens bagi ${personA.name} dan ${personB.name}. Fokuslah pada pemberian ruang bagi otonomi masing-masing. Dengan kesadaran tinggi, kalian bisa melampaui hambatan komunikasi awal menjadi koneksi yang lebih dewasa.`;
+    summary = `Dinamika ini cukup menantang dan membutuhkan kesadaran diri yang tinggi dari ${personA.name} dan ${personB.name}. Ini adalah hubungan 'karmis' yang bertujuan untuk memicu evolusi pribadi kalian melalui cermin yang intens. Kesabaran dan pemberian ruang pribadi adalah kunci utama kelangsungan hubungan ini.`;
   }
 
-  // Memberikan sedikit variasi pada Moon Sign berdasarkan tanggal (simulasi)
-  const moonSigns = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
+  const moonSignsID = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagitarius", "Kaprikornus", "Akuarius", "Pisces"];
   const getMoonIdx = (d: string) => (new Date(d).getDate() + new Date(d).getMonth()) % 12;
 
   return {
-    personA: { ...personA, moonSign: moonSigns[getMoonIdx(aData.date)] },
-    personB: { ...personB, moonSign: moonSigns[getMoonIdx(bData.date)] },
+    personA: { ...personA, moonSign: moonSignsID[getMoonIdx(aData.date)] },
+    personB: { ...personB, moonSign: moonSignsID[getMoonIdx(bData.date)] },
     compatibility: {
       ...baseComp,
       summary
