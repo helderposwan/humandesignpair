@@ -34,13 +34,12 @@ const App: React.FC = () => {
 
     setStep('loading');
     try {
-      // Menggunakan Gemini API untuk kalkulasi HD & Astrologi dari data kelahiran
       const result = await getFullCosmicAnalysis(personA, personB);
       setAnalysis(result);
       setStep('results');
     } catch (error: any) {
       console.error("Analysis Error:", error);
-      alert("Gagal memproses data. Pastikan API_KEY sudah diset di Cloudflare dan lakukan 'Retry Deployment'.");
+      alert("Gagal memproses data. Pastikan API_KEY sudah diset.");
       setStep('input');
     }
   };
@@ -51,7 +50,7 @@ const App: React.FC = () => {
   };
 
   const ProfileCard = ({ profile, color }: { profile: any, color: string }) => (
-    <div className={`bg-white p-5 rounded-3xl border border-gray-100 soft-shadow mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
+    <div className={`bg-white p-5 rounded-xl border border-gray-100 shadow-sm mb-4 animate-in fade-in slide-in-from-bottom-2 duration-500`}>
       <h4 className={`text-lg font-heading font-bold ${color} mb-3`}>{profile.name}'s Profile</h4>
       <div className="grid grid-cols-2 gap-y-3 text-xs">
         <div>
@@ -88,7 +87,7 @@ const App: React.FC = () => {
       <main className="flex-1 flex flex-col justify-center">
         {step === 'welcome' && (
           <div className="text-center">
-            <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm animate-bounce">
               <span className="text-4xl">🌌</span>
             </div>
             <h2 className="text-[38px] leading-tight font-heading font-semibold text-gray-800 mb-6 h-24 flex items-center justify-center">
@@ -102,7 +101,7 @@ const App: React.FC = () => {
             </p>
             <button 
               onClick={() => setStep('input')}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 rounded-xl transition-all shadow-md active:scale-95"
             >
               Mulai Analisis
             </button>
@@ -123,11 +122,11 @@ const App: React.FC = () => {
               data={personB} 
               onChange={setPersonB}
               accentColor="text-rose-500"
-              placeholderName="Contoh: Annisa Mutiarani"
+              placeholderName="Annisa Mutiarani"
             />
             <button 
               onClick={handleReveal}
-              className="w-full bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-bold py-4 rounded-2xl shadow-xl active:scale-95 transition-all mt-4"
+              className="w-full bg-gradient-to-r from-indigo-600 to-rose-500 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all mt-4"
             >
               Lihat Kecocokan
             </button>
@@ -137,7 +136,7 @@ const App: React.FC = () => {
         {step === 'loading' && (
           <div className="text-center animate-in fade-in">
             <div className="relative w-32 h-32 mx-auto mb-8">
-              <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-indigo-50 rounded-full opacity-10"></div>
               <div className="absolute inset-0 border-4 border-t-indigo-500 rounded-full animate-spin"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="text-2xl animate-pulse">✨</span>
@@ -150,7 +149,7 @@ const App: React.FC = () => {
 
         {step === 'results' && analysis && (
           <div className="animate-in zoom-in-95 fade-in duration-700 pb-10">
-            <div className="bg-white p-8 rounded-[2.5rem] soft-shadow text-center mb-6 relative overflow-hidden">
+            <div className="bg-white p-8 rounded-2xl shadow-sm text-center mb-6 relative overflow-hidden border border-gray-100">
               <div className="relative">
                 <div className="text-6xl font-heading font-black text-indigo-600 mb-2">
                   {analysis.compatibility.score}%
@@ -165,7 +164,7 @@ const App: React.FC = () => {
             <ProfileCard profile={analysis.personA} color="text-indigo-600" />
             <ProfileCard profile={analysis.personB} color="text-rose-500" />
 
-            <div className="bg-indigo-600 text-white p-6 rounded-3xl mb-6 shadow-xl shadow-indigo-100">
+            <div className="bg-indigo-600 text-white p-6 rounded-2xl mb-6 shadow-md">
               <h4 className="text-xs font-bold uppercase tracking-tighter opacity-80 mb-3">Dinamika Hubungan</h4>
               <p className="text-md leading-relaxed font-light italic">
                 "{analysis.compatibility.summary}"
@@ -173,13 +172,13 @@ const App: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-white/50 p-4 rounded-3xl border border-white/80">
+              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <h4 className="text-xs font-bold text-green-600 uppercase mb-2">Kekuatan</h4>
                 <ul className="text-[10px] text-gray-600 space-y-2">
                   {analysis.compatibility.strengths.map((s, i) => <li key={i}>• {s}</li>)}
                 </ul>
               </div>
-              <div className="bg-white/50 p-4 rounded-3xl border border-white/80">
+              <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                 <h4 className="text-xs font-bold text-amber-600 uppercase mb-2">Tantangan</h4>
                 <ul className="text-[10px] text-gray-600 space-y-2">
                   {analysis.compatibility.challenges.map((c, i) => <li key={i}>• {c}</li>)}
@@ -188,8 +187,8 @@ const App: React.FC = () => {
             </div>
 
             <div className="flex gap-4 no-print">
-              <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-2xl active:scale-95 transition-all">Ulangi</button>
-              <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">Simpan PDF</button>
+              <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-xl active:scale-95 transition-all">Ulangi</button>
+              <button onClick={() => window.print()} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md active:scale-95 transition-all">Simpan PDF</button>
             </div>
           </div>
         )}

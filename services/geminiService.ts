@@ -1,100 +1,107 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 import { BirthData, FullAnalysisResponse } from "../types.ts";
+import { getZodiacSign, getShio, getMockHDData, calculateCompatibility } from "../logic/compatibilityEngine.ts";
 
 /**
- * Performs a comprehensive cosmic compatibility analysis using Gemini 3 Flash
+ * Performs a comprehensive cosmic compatibility analysis.
+ * Uses deterministic logic for calculations and Gemini for emotional phrasing.
  */
-export const getFullCosmicAnalysis = async (a: BirthData, b: BirthData): Promise<FullAnalysisResponse> => {
-  // Obtain API key exclusively from process.env
-  // Check for common naming variations
-  const apiKey = process.env.API_KEY || (process.env as any).API_Key || (process.env as any).api_key;
+export const getFullCosmicAnalysis = async (aData: BirthData, bData: BirthData): Promise<FullAnalysisResponse> => {
+  // Ensure process.env is accessible in module scope
+  const env = (window as any).process?.env || {};
+  const apiKey = env.API_KEY;
   
-  if (!apiKey || apiKey === 'undefined' || apiKey === '') {
-    throw new Error("API_KEY is missing. Harap lakukan 'Retry Deployment' di dashboard Cloudflare.");
+  if (!apiKey) {
+    throw new Error("API_KEY is not configured in environment.");
   }
 
-  // Create instance right before making the call
-  const ai = new GoogleGenAI({ apiKey: apiKey as string });
+  // 1. Calculate deterministic data first (PRD Requirement: AI does not calculate logic)
+  const personA_HD = getMockHDData(aData.date);
+  const personB_HD = getMockHDData(bData.date);
+  const shioA = getShio(aData.date);
+  const shioB = getShio(bData.date);
+
+  const personA = {
+    name: aData.name,
+    ...personA_HD,
+    sunSign: getZodiacSign(aData.date),
+    moonSign: "Calculating...", // Simple fallback as moon requires complex math
+    shio: shioA.animal,
+    element: shioA.element
+  };
+
+  const personB = {
+    name: bData.name,
+    ...personB_HD,
+    sunSign: getZodiacSign(bData.date),
+    moonSign: "Calculating...",
+    shio: shioB.animal,
+    element: shioB.element
+  };
+
+  const baseComp = calculateCompatibility(personA, personB);
+
+  // 2. Use Gemini for Emotional Interpretation
+  const ai = new GoogleGenAI({ apiKey });
+  const model = 'gemini-3-pro-preview';
   
   const prompt = `
-    Analyze the birth details of two people and provide a detailed Human Design and Astrological compatibility report.
+    Generate a concise, emotionally intelligent relationship insight (summary) for two people based on this compatibility data:
     
-    Person A: Name: ${a.name}, Born: ${a.date} at ${a.time} (Location: ${a.location || 'Unknown'})
-    Person B: Name: ${b.name}, Born: ${b.date} at ${b.time} (Location: ${b.location || 'Unknown'})
+    Person A: ${personA.name} (${personA.hdType}, ${personA.hdProfile}, ${personA.hdAuthority}, Sun Sign: ${personA.sunSign}, Chinese Zodiac: ${personA.shio})
+    Person B: ${personB.name} (${personB.hdType}, ${personB.hdProfile}, ${personB.hdAuthority}, Sun Sign: ${personB.sunSign}, Chinese Zodiac: ${personB.shio})
+    
+    Deterministic Compatibility Results:
+    Score: ${baseComp.score}/100
+    Archetype: ${baseComp.archetype}
+    Headline: ${baseComp.headline}
+    Strengths: ${baseComp.strengths.join(', ')}
+    Challenges: ${baseComp.challenges.join(', ')}
 
-    Calculate:
-    1. Human Design: Type, Inner Authority, and Profile.
-    2. Western Astrology: Sun Sign and Moon Sign.
-    3. Chinese Zodiac (Shio): Animal and Element.
-    4. Compatibility: A score (0-100), a headline, an archetype, and a detailed relationship summary.
-
-    Be emotionally intelligent, grounded, and insightful. Avoid heavy spiritual jargon. Use the provided JSON schema.
+    Instruction: Write a 2-3 sentence "Emotional Tone Summary". 
+    Avoid spiritual jargon. Use grounded, warm, and human language. Focus on growth and dynamics.
+    Return ONLY a JSON object matching the requested schema.
   `;
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: model,
       contents: prompt,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            personA: {
-              type: Type.OBJECT,
-              properties: {
-                name: { type: Type.STRING },
-                hdType: { type: Type.STRING },
-                hdAuthority: { type: Type.STRING },
-                hdProfile: { type: Type.STRING },
-                sunSign: { type: Type.STRING },
-                moonSign: { type: Type.STRING },
-                shio: { type: Type.STRING },
-                element: { type: Type.STRING },
-              },
-              required: ["name", "hdType", "hdAuthority", "hdProfile", "sunSign", "moonSign", "shio", "element"]
-            },
-            personB: {
-              type: Type.OBJECT,
-              properties: {
-                name: { type: Type.STRING },
-                hdType: { type: Type.STRING },
-                hdAuthority: { type: Type.STRING },
-                hdProfile: { type: Type.STRING },
-                sunSign: { type: Type.STRING },
-                moonSign: { type: Type.STRING },
-                shio: { type: Type.STRING },
-                element: { type: Type.STRING },
-              },
-              required: ["name", "hdType", "hdAuthority", "hdProfile", "sunSign", "moonSign", "shio", "element"]
-            },
-            compatibility: {
-              type: Type.OBJECT,
-              properties: {
-                score: { type: Type.NUMBER },
-                headline: { type: Type.STRING },
-                archetype: { type: Type.STRING },
-                summary: { type: Type.STRING },
-                strengths: { type: Type.ARRAY, items: { type: Type.STRING } },
-                challenges: { type: Type.ARRAY, items: { type: Type.STRING } },
-              },
-              required: ["score", "headline", "archetype", "summary", "strengths", "challenges"]
-            }
+            emotionalSummary: { type: Type.STRING },
+            refinedMoonSignA: { type: Type.STRING },
+            refinedMoonSignB: { type: Type.STRING }
           },
-          required: ["personA", "personB", "compatibility"]
+          required: ["emotionalSummary", "refinedMoonSignA", "refinedMoonSignB"]
         }
       }
     });
 
-    const resultText = response.text;
-    if (!resultText) {
-      throw new Error("Empty response from AI model.");
-    }
-
-    return JSON.parse(resultText);
+    const result = JSON.parse(response.text || '{}');
+    
+    return {
+      personA: { ...personA, moonSign: result.refinedMoonSignA || "Cosmic" },
+      personB: { ...personB, moonSign: result.refinedMoonSignB || "Cosmic" },
+      compatibility: {
+        ...baseComp,
+        summary: result.emotionalSummary || "A unique cosmic connection based on shared energy signatures."
+      }
+    };
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw error;
+    console.error("Gemini Interpretation Error:", error);
+    // Fallback to deterministic results if AI fails
+    return {
+      personA,
+      personB,
+      compatibility: {
+        ...baseComp,
+        summary: `The connection between ${personA.name} and ${personB.name} is a ${baseComp.archetype} dynamic with a score of ${baseComp.score}%. You both bring unique strengths to the partnership.`
+      }
+    };
   }
 };

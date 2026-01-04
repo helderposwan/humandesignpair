@@ -3,6 +3,7 @@ import { PersonData, CompatibilityResult, HDType, HDAuthority } from '../types';
 
 // Helper: Get Zodiac Sign
 export const getZodiacSign = (dateStr: string) => {
+  if (!dateStr) return "Unknown";
   const date = new Date(dateStr);
   const month = date.getMonth() + 1;
   const day = date.getDate();
@@ -22,23 +23,42 @@ export const getZodiacSign = (dateStr: string) => {
 
 // Helper: Get Chinese Zodiac (Shio)
 export const getShio = (dateStr: string) => {
+  if (!dateStr) return { animal: "Unknown", element: "Unknown" };
   const year = new Date(dateStr).getFullYear();
   const animals = ["Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake", "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"];
   const elements = ["Metal", "Water", "Wood", "Fire", "Earth"];
   
-  const animal = animals[(year - 4) % 12];
-  const element = elements[Math.floor(((year - 4) % 10) / 2)];
+  // Use positive modulo for safe indexing
+  const animalIndex = ((year - 4) % 12 + 12) % 12;
+  const elementIndex = Math.floor((((year - 4) % 10 + 10) % 10) / 2);
+  
+  const animal = animals[animalIndex];
+  const element = elements[elementIndex];
   return { animal, element };
 };
 
-export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { summary: string } => {
-  let score = 65; // Start with decent baseline
+// Simplified HD Calculation Mock (Deterministic as per PRD)
+// In a real app, this would use ephemeris data.
+export const getMockHDData = (dateStr: string) => {
+  const d = new Date(dateStr).getTime();
+  const types = Object.values(HDType);
+  const authorities = Object.values(HDAuthority);
+  const profiles = ['1/3', '1/4', '2/4', '2/5', '3/5', '3/6', '4/6', '4/1', '5/1', '5/2', '6/2'];
+  
+  return {
+    hdType: types[d % types.length],
+    hdAuthority: authorities[d % authorities.length],
+    hdProfile: profiles[d % profiles.length]
+  };
+};
+
+export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { summary?: string } => {
+  let score = 65; 
   let archetype = "Dynamic Duo";
   let headline = "Beautiful Alignment";
   const strengths: string[] = [];
   const challenges: string[] = [];
   
-  // Logic 1: HD Type Synergy
   const pair = [a.hdType, b.hdType].sort().join(' x ');
   
   if (pair.includes('Generator') && pair.includes('Projector')) {
@@ -58,7 +78,6 @@ export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { 
     challenges.push("Need for autonomy", "Communication gaps");
   }
 
-  // Logic 2: Authority
   if (a.hdAuthority === b.hdAuthority) {
     score += 10;
     strengths.push("Harmonious decision making");
@@ -66,22 +85,17 @@ export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { 
     challenges.push("Different emotional waves");
   }
 
-  // Logic 3: Profiles
   if (a.hdProfile === b.hdProfile) {
     score += 10;
     strengths.push("Identical world view");
   }
 
-  // Generate a human-like summary locally
-  const summary = `Connection between ${a.name} and ${b.name} is defined by ${headline.toLowerCase()}. With a compatibility score of ${score}%, you both bring a unique ${archetype} dynamic to the table. ${a.name}'s ${a.hdType} nature complements ${b.name}'s ${b.hdType} energy. Focus on honoring your individual strategies to thrive.`;
-
   return {
     score: Math.min(100, Math.max(0, score)),
     headline,
     archetype,
-    strengths,
+    strengths: strengths.length ? strengths : ["Mutual respect", "Shared growth"],
     challenges: challenges.length ? challenges : ["Minor communication nuances"],
-    advice: "Respect each other's unique energy signature.",
-    summary
+    advice: "Respect each other's unique energy signature."
   };
 };
