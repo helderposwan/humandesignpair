@@ -324,7 +324,7 @@ const App: React.FC = () => {
                 </div>
 
                 <div className="text-center bg-gray-50 rounded-[3rem] py-8 px-8 border border-gray-100 relative overflow-hidden shadow-sm">
-                  <div className="text-[96px] font-heading font-black text-indigo-600 leading-none mb-1">{analysis.compatibility.score}%</div>
+                  <div className="text-[110x] font-heading font-black text-indigo-600 leading-none mb-1">{analysis.compatibility.score}%</div>
                   <h2 className="text-3xl font-heading font-bold text-gray-800 mb-3">{analysis.compatibility.headline}</h2>
                   <span className="px-6 py-2 bg-indigo-600 text-white text-[11px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200">
                     {analysis.compatibility.archetype}
