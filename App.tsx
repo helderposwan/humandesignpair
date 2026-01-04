@@ -28,6 +28,10 @@ const App: React.FC = () => {
     }
   };
 
+  const handleSavePDF = () => {
+    window.print();
+  };
+
   const reset = () => {
     setStep('input');
     setAnalysis(null);
@@ -65,7 +69,7 @@ const App: React.FC = () => {
         <h1 className="text-3xl font-heading font-bold bg-gradient-to-r from-indigo-600 to-rose-500 bg-clip-text text-transparent">
           CosmicVibe HD
         </h1>
-        <p className="text-gray-500 text-sm mt-1">Universal Compatibility Decoder</p>
+        <p className="text-gray-500 text-sm mt-1 no-print">Universal Compatibility Decoder</p>
       </header>
 
       <main className="flex-1 flex flex-col justify-center">
@@ -127,8 +131,8 @@ const App: React.FC = () => {
         {step === 'results' && analysis && (
           <div className="animate-in zoom-in-95 fade-in duration-700">
             <div className="bg-white p-8 rounded-[2.5rem] soft-shadow text-center mb-6 relative overflow-hidden">
-              <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-50 rounded-full opacity-50"></div>
-              <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-rose-50 rounded-full opacity-50"></div>
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-50 rounded-full opacity-50 no-print"></div>
+              <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-rose-50 rounded-full opacity-50 no-print"></div>
               <div className="relative">
                 <div className="text-6xl font-heading font-black text-indigo-600 mb-2">
                   {analysis.compatibility.score}%
@@ -165,16 +169,17 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 no-print">
               <button onClick={reset} className="flex-1 bg-gray-100 text-gray-600 font-semibold py-4 rounded-2xl active:scale-95 transition-all">New Chart</button>
-              <button onClick={() => alert("Coming soon!")} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">Save PDF</button>
+              <button onClick={handleSavePDF} className="flex-1 bg-indigo-600 text-white font-semibold py-4 rounded-2xl shadow-lg active:scale-95 transition-all">Save PDF</button>
             </div>
           </div>
         )}
       </main>
 
-      <footer className="mt-8 text-center text-xs text-gray-400">
-        <p>© 2024 CosmicVibe. For entertainment purposes.</p>
+      <footer className="mt-8 text-center text-xs text-gray-400 no-print">
+        <p>© 2026 CosmicVibe. For entertainment purposes.</p>
+        <p className="mt-1">built by haze nightwalker</p>
       </footer>
     </div>
   );

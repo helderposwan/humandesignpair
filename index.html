@@ -21,6 +21,46 @@
         .soft-shadow {
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
+
+        /* Print styles to make Save PDF work beautifully */
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #root {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+            .max-w-md {
+                max-width: none !important;
+            }
+            .rounded-\[2\.5rem\], .rounded-3xl {
+                border: 1px solid #eee !important;
+                border-radius: 1rem !important;
+                box-shadow: none !important;
+            }
+            header h1 {
+                font-size: 2rem !important;
+                color: black !important;
+                background: none !important;
+                -webkit-text-fill-color: initial !important;
+            }
+            .bg-indigo-600 {
+                background-color: #4f46e5 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+            }
+            .bg-white {
+                background-color: white !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
     </style>
 <script type="importmap">
 {
