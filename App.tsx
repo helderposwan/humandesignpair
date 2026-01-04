@@ -297,7 +297,7 @@ const App: React.FC = () => {
               >
                 {isSaving ? "Menyimpan..." : "📥 Simpan Hasil"}
               </button>
-              <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl text-sm font-bold">Analisis Pasangan Lain</button>
+              <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl text-sm font-bold">Analisis Lagi</button>
             </div>
 
             {/* EXPORT TEMPLATE (4:5 - 1000x1250) */}
@@ -314,54 +314,58 @@ const App: React.FC = () => {
               }}
               className="font-sans"
             >
-              <div className="h-full bg-white rounded-[4rem] border border-gray-200 shadow-2xl p-12 flex flex-col relative space-y-6">
-                <div className="flex justify-between items-center px-4">
+              <div className="h-full bg-white rounded-[4rem] border border-gray-200 shadow-2xl p-12 flex flex-col relative space-y-4">
+                <div className="flex justify-between items-center px-4 pt-2">
                   <div>
                     <h1 className="text-5xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
-                    <p className="text-indigo-400 text-xs uppercase font-bold tracking-[0.5em] mt-1">Verification CVHD-{(analysis.compatibility.score * 1234).toString(16).toUpperCase()}</p>
+                    <p className="text-indigo-400 text-[10px] uppercase font-bold tracking-[0.5em] mt-1">Auth Code: CV-{(analysis.compatibility.score * 1234).toString(16).toUpperCase()}</p>
                   </div>
-                  <div className="w-20 h-20 rounded-full border-[6px] border-indigo-50 flex items-center justify-center text-4xl bg-white shadow-inner">🌌</div>
+                  <div className="w-16 h-16 rounded-full border-[4px] border-indigo-50 flex items-center justify-center text-3xl bg-white shadow-inner">🌌</div>
                 </div>
 
-                <div className="text-center bg-gray-50 rounded-[3rem] py-8 px-8 border border-gray-100 relative overflow-hidden shadow-sm">
-                  <div className="text-[110x] font-heading font-black text-indigo-600 leading-none mb-1">{analysis.compatibility.score}%</div>
+                {/* Score Hero Area - Prominent and Bold */}
+                <div className="text-center bg-gray-50 rounded-[3.5rem] py-8 px-8 border border-gray-100 relative overflow-hidden shadow-sm">
+                  <div className="text-[180px] font-heading font-black text-indigo-600 leading-none -mb-4 tracking-tighter flex items-center justify-center">
+                    {analysis.compatibility.score}<span className="text-6xl mb-12 ml-2 opacity-80">%</span>
+                  </div>
                   <h2 className="text-3xl font-heading font-bold text-gray-800 mb-3">{analysis.compatibility.headline}</h2>
-                  <span className="px-6 py-2 bg-indigo-600 text-white text-[11px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200">
+                  <span className="px-8 py-2.5 bg-indigo-600 text-white text-[13px] font-black rounded-full uppercase tracking-widest shadow-lg shadow-indigo-200">
                     {analysis.compatibility.archetype}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 h-[340px]">
+                {/* Profiles Row */}
+                <div className="grid grid-cols-2 gap-6 h-[320px]">
                   <PortraitExportProfile profile={analysis.personA} color="text-indigo-600" />
                   <PortraitExportProfile profile={analysis.personB} color="text-rose-500" />
                 </div>
 
-                <div className="bg-gray-900 text-white p-10 rounded-[3rem] shadow-2xl flex flex-col justify-center">
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-indigo-400 mb-3 border-b border-white/10 pb-1">Ringkasan Esensial</h4>
-                  <p className="text-[16px] leading-relaxed font-light italic text-gray-100">
+                {/* Summary Box */}
+                <div className="bg-gray-900 text-white p-8 rounded-[3rem] shadow-2xl flex flex-col justify-center border border-gray-800">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-indigo-400 mb-2 border-b border-white/10 pb-1">Esensi Koneksi</h4>
+                  <p className="text-[17px] leading-relaxed font-light italic text-gray-100">
                     "{analysis.compatibility.summary}"
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 flex-1 min-h-0">
-                  <div className="bg-green-50 p-8 rounded-[3rem] border border-green-100 flex flex-col">
-                    <h4 className="text-[11px] font-bold text-green-700 uppercase tracking-[0.2em] mb-4 flex items-center gap-2"><span>✅</span> Pilar Kekuatan</h4>
-                    <ul className="text-[13px] text-green-900 space-y-4 font-bold flex-1">
-                      {analysis.compatibility.strengths.slice(0, 3).map((s, i) => (
-                        <li key={i} className="flex items-start gap-1 leading-tight">• {s}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-amber-50 p-8 rounded-[3rem] border border-amber-100 flex flex-col">
-                    <h4 className="text-[11px] font-bold text-amber-700 uppercase tracking-[0.2em] mb-4 flex items-center gap-2"><span>⚠️</span> Area Pengembangan</h4>
-                    <ul className="text-[13px] text-amber-900 space-y-4 font-bold flex-1">
-                      {analysis.compatibility.challenges.slice(0, 3).map((c, i) => (
-                        <li key={i} className="flex items-start gap-1 leading-tight">• {c}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {/* Strengths Section - Full Width, Adaptive Large Text (Refined Spacing) */}
+                <div className="bg-green-50 p-10 rounded-[3.5rem] border border-green-100 flex flex-col flex-1 min-h-0 justify-center">
+                  <header className="mb-4 flex items-center justify-center gap-3">
+                    <div className="h-[2px] w-8 bg-green-200"></div>
+                    <h4 className="text-[12px] font-bold text-green-700 uppercase tracking-[0.3em] flex items-center gap-2">Pilar Kekuatan Utama</h4>
+                    <div className="h-[2px] w-8 bg-green-200"></div>
+                  </header>
+                  <ul className="text-[22px] text-green-900 space-y-4 font-bold flex flex-col items-center text-center">
+                    {analysis.compatibility.strengths.slice(0, 4).map((s, i) => (
+                      <li key={i} className="flex items-center gap-3 leading-[1.15] max-w-[820px]">
+                        <span className="w-2.5 h-2.5 rounded-full bg-green-400 shrink-0"></span>
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
 
+                {/* Footer Section (Added back for completeness) */}
               </div>
             </div>
           </div>
