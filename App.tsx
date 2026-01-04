@@ -130,9 +130,9 @@ const App: React.FC = () => {
         </div>
       </div>
       <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100/50">
-        <span className="text-indigo-400 block uppercase tracking-tighter text-[10px] mb-1 font-bold">🚀 Karir & Bakat Terbaik</span>
+        <span className="text-indigo-400 block uppercase tracking-tighter text-[10px] mb-1 font-bold">💬 Gaya Komunikasi Utama</span>
         <p className="text-[12px] text-indigo-900 leading-relaxed font-medium">
-          {profile.careerPath}
+          {profile.communicationStyle}
         </p>
       </div>
     </div>
@@ -212,7 +212,6 @@ const App: React.FC = () => {
 
         {step === 'results' && analysis && (
           <div className="animate-in zoom-in-95 fade-in duration-700 pb-10">
-            {/* Hasil yang bisa di-download */}
             <div ref={resultsRef} className="bg-[#fdfcfb] p-6 rounded-3xl border border-gray-100/50 shadow-inner">
               <div className="text-center mb-8">
                  <h1 className="text-2xl font-heading font-extrabold text-gray-900">Analisis Kompatibilitas Multidimensi</h1>
@@ -231,7 +230,6 @@ const App: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {/* Dekorasi latar belakang */}
                 <div className="absolute -top-10 -right-10 w-40 h-40 bg-indigo-50 rounded-full opacity-50"></div>
                 <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-rose-50 rounded-full opacity-50"></div>
               </div>
@@ -251,7 +249,6 @@ const App: React.FC = () => {
                 <div className="absolute top-0 right-0 p-4 text-4xl opacity-10">✨</div>
               </div>
 
-              {/* Communication Style Section */}
               <div className="bg-white p-6 rounded-2xl border-l-4 border-indigo-500 shadow-sm mb-6">
                 <h4 className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-3 flex items-center gap-2">
                   <span className="text-lg">💬</span> Protokol Komunikasi Pasangan

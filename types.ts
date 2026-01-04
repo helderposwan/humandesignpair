@@ -15,7 +15,7 @@ export interface CosmicProfile {
   moonSign: string;
   shio: string;
   element: string;
-  careerPath: string; // New: Best career path
+  communicationStyle: string; // Updated from careerPath
 }
 
 export interface CompatibilityAnalysis {
@@ -25,7 +25,7 @@ export interface CompatibilityAnalysis {
   summary: string;
   strengths: string[];
   challenges: string[];
-  communicationAdvice: string; // New: Communication style advice
+  communicationAdvice: string;
 }
 
 export interface FullAnalysisResponse {
@@ -34,7 +34,6 @@ export interface FullAnalysisResponse {
   compatibility: CompatibilityAnalysis;
 }
 
-// Added missing Human Design enums used by constants.ts and compatibilityEngine.ts
 export enum HDType {
   Generator = 'Generator',
   ManifestingGenerator = 'Manifesting Generator',
@@ -68,7 +67,6 @@ export enum HDProfile {
   P6_3 = '6/3'
 }
 
-// Added missing interfaces for the local compatibility engine
 export interface PersonData {
   type: HDType;
   authority: HDAuthority;
