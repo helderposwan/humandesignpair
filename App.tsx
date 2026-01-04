@@ -76,7 +76,7 @@ const App: React.FC = () => {
     
     setIsSaving(true);
     const element = exportRef.current;
-    const fileName = `Cosmic_Verdict_${analysis.personA.name}_${analysis.personB.name}.jpg`;
+    const fileName = `Cosmic_Report_${analysis.personA.name}_${analysis.personB.name}.jpg`;
 
     // @ts-ignore
     window.html2canvas(element, {
@@ -84,8 +84,7 @@ const App: React.FC = () => {
       useCORS: true,
       backgroundColor: '#ffffff',
       logging: false,
-      width: 1080,
-      height: 1920, 
+      // Removed fixed width/height to let html2canvas capture the natural content size
     }).then((canvas: HTMLCanvasElement) => {
       const link = document.createElement('a');
       link.download = fileName;
@@ -154,31 +153,31 @@ const App: React.FC = () => {
   );
 
   const PortraitExportProfile = ({ profile, color }: { profile: any, color: string }) => (
-    <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
-      <header className="border-b border-gray-50 pb-4 mb-4">
-        <h4 className={`text-2xl font-heading font-black ${color} truncate`}>{profile.name}</h4>
-        <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest mt-0.5">Energy Blueprint</p>
+    <div className="bg-white p-8 rounded-[3.5rem] border border-gray-100 shadow-sm flex flex-col h-full overflow-hidden">
+      <header className="border-b border-gray-50 pb-5 mb-6">
+        <h4 className={`text-4xl font-heading font-black ${color} truncate tracking-tighter`}>{profile.name}</h4>
+        <p className="text-[12px] font-bold text-gray-300 uppercase tracking-[0.2em] mt-1">Energy Blueprint</p>
       </header>
       
-      <div className="space-y-4 flex-1">
+      <div className="space-y-6 flex-1">
         {[
           { l: 'Type', v: profile.hdType },
           { l: 'Profile', v: profile.hdProfile },
           { l: 'Authority', v: profile.hdAuthority },
         ].map((item, i) => (
           <div key={i}>
-            <span className="text-[9px] font-bold text-gray-300 uppercase block mb-0.5">{item.l}</span>
-            <p className="font-bold text-gray-800 text-[14px] leading-tight truncate">{item.v}</p>
+            <span className="text-[11px] font-bold text-gray-300 uppercase block mb-1.5">{item.l}</span>
+            <p className="font-bold text-gray-800 text-[20px] leading-tight truncate">{item.v}</p>
           </div>
         ))}
-        <div className="pt-3 border-t border-gray-50 flex justify-between">
-           <div>
-             <span className="text-[9px] font-bold text-gray-300 uppercase block">Sun Sign</span>
-             <span className="text-[12px] font-bold text-gray-600">{profile.sunSign}</span>
+        <div className="pt-6 border-t border-gray-50 flex justify-between gap-4">
+           <div className="min-w-0 flex-1">
+             <span className="text-[11px] font-bold text-gray-300 uppercase block truncate">Sun Sign</span>
+             <span className="text-[16px] font-bold text-gray-600 block truncate">{profile.sunSign}</span>
            </div>
-           <div>
-             <span className="text-[9px] font-bold text-gray-300 uppercase block">Shio</span>
-             <span className="text-[12px] font-bold text-gray-600">{profile.shio}</span>
+           <div className="min-w-0 flex-1">
+             <span className="text-[11px] font-bold text-gray-300 uppercase block truncate">Shio</span>
+             <span className="text-[16px] font-bold text-gray-600 block truncate">{profile.shio}</span>
            </div>
         </div>
       </div>
@@ -294,84 +293,98 @@ const App: React.FC = () => {
                 disabled={isSaving}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                {isSaving ? "Menyiapkan Gambar..." : "📥 Simpan Hasil"}
+                {isSaving ? "Menyiapkan Gambar..." : "📥 Simpan Analisis (JPG)"}
               </button>
               <button onClick={reset} className="w-full bg-white border border-gray-200 text-gray-500 py-4 rounded-2xl text-sm font-bold">Analisis Lagi</button>
             </div>
 
-            {/* EXPORT TEMPLATE - Optimized for IG Story (9:16 - 1080x1920) */}
+            {/* DYNAMIC EXPORT TEMPLATE - Width fixed 1000px, height auto-adjusting */}
             <div 
               ref={exportRef} 
               style={{ 
                 position: 'absolute', 
                 left: '-9999px', 
-                width: '1080px', 
-                height: '1920px', 
+                width: '1000px', 
                 backgroundColor: '#ffffff',
-                padding: '60px',
-                overflow: 'hidden'
+                padding: '50px',
+                overflow: 'visible'
               }}
               className="font-sans"
             >
-              <div className="h-full w-full bg-white border-[24px] border-gray-50 rounded-[6rem] p-16 flex flex-col relative space-y-12">
+              <div className="w-full bg-white border-[20px] border-gray-50 rounded-[5rem] p-12 flex flex-col space-y-12">
                 
-                {/* Header Section */}
-                <div className="flex justify-between items-center pt-4">
+                {/* Header */}
+                <div className="flex justify-between items-center px-6">
                   <div>
                     <h1 className="text-6xl font-heading font-black text-gray-900 tracking-tighter">Cosmic Vibes</h1>
-                    <p className="text-indigo-400 text-sm uppercase font-bold tracking-[0.5em] mt-2">Quantum Synergy Report</p>
+                    <p className="text-indigo-400 text-lg uppercase font-bold tracking-[0.4em] mt-2">Quantum Synergy Report</p>
                   </div>
                   <div className="w-24 h-24 rounded-full border-[6px] border-indigo-50 flex items-center justify-center text-5xl bg-white shadow-xl">🌌</div>
                 </div>
 
-                {/* Score Section - Massive Visual Impact */}
-                <div className="text-center bg-gray-50 rounded-[5rem] py-16 px-12 border border-gray-100 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-rose-500"></div>
-                  <p className="text-gray-400 text-xs font-black uppercase tracking-[0.4em] mb-4">Compatibility Score</p>
-                  <div className="text-[260px] font-heading font-black text-indigo-600 leading-none -mb-6 tracking-tighter flex items-center justify-center">
-                    {analysis.compatibility.score}<span className="text-7xl mb-24 ml-4 opacity-70">%</span>
+                {/* Score Hero */}
+                <div className="text-center bg-gray-50 rounded-[5rem] py-14 px-12 border border-gray-100 relative overflow-hidden shadow-sm flex flex-col items-center">
+                  <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-rose-500"></div>
+                  <p className="text-gray-400 text-sm font-black uppercase tracking-[0.6em] mb-4">Compatibility Score</p>
+                  
+                  <div className="relative flex items-baseline justify-center mb-4">
+                    <span className="text-[200px] font-heading font-black text-indigo-600 leading-none tracking-tighter">
+                      {analysis.compatibility.score}
+                    </span>
+                    <span className="text-7xl font-black text-indigo-400 ml-3 mb-16 opacity-70">%</span>
                   </div>
-                  <h2 className="text-5xl font-heading font-bold text-gray-800 mb-6 leading-tight">{analysis.compatibility.headline}</h2>
-                  <div className="inline-block px-12 py-4 bg-indigo-600 text-white text-[16px] font-black rounded-full uppercase tracking-widest shadow-2xl shadow-indigo-200">
+
+                  <h2 className="text-5xl font-heading font-bold text-gray-800 mb-8 leading-tight tracking-tight max-w-[750px]">
+                    {analysis.compatibility.headline}
+                  </h2>
+                  
+                  <div className="inline-block px-12 py-5 bg-indigo-600 text-white text-[18px] font-black rounded-full uppercase tracking-[0.2em] shadow-xl">
                     {analysis.compatibility.archetype}
                   </div>
                 </div>
 
                 {/* Profiles Grid */}
-                <div className="grid grid-cols-2 gap-10 h-[450px]">
+                <div className="grid grid-cols-2 gap-8 min-h-[480px]">
                   <PortraitExportProfile profile={analysis.personA} color="text-indigo-600" />
                   <PortraitExportProfile profile={analysis.personB} color="text-rose-500" />
                 </div>
 
-                {/* Cosmic Verdict - The Story Summary */}
-                <div className="bg-gray-900 text-white p-14 rounded-[5rem] shadow-2xl flex flex-col justify-center border border-gray-800 min-h-[350px]">
-                  <header className="mb-6 flex items-center gap-4">
-                    <div className="w-10 h-1 bg-indigo-500"></div>
-                    <h4 className="text-xs font-bold uppercase tracking-[0.5em] text-indigo-400">Cosmic Verdict</h4>
+                {/* Cosmic Verdict Summary Box */}
+                <div className="bg-gray-900 text-white p-16 rounded-[5rem] shadow-xl flex flex-col justify-center border border-gray-800 relative">
+                  <div className="absolute top-12 left-12 opacity-10 text-[120px] leading-none font-serif text-white italic">“</div>
+                  <header className="mb-6 flex items-center gap-6">
+                    <div className="w-12 h-[2px] bg-indigo-500"></div>
+                    <h4 className="text-md font-bold uppercase tracking-[0.7em] text-indigo-400">Cosmic Verdict</h4>
                   </header>
-                  <p className="text-[28px] leading-[1.3] font-light italic text-gray-100">
-                    "{analysis.compatibility.summary}"
+                  <p className="text-[32px] leading-[1.4] font-light italic text-gray-100 pr-4 relative z-10 tracking-tight">
+                    {analysis.compatibility.summary}
                   </p>
+                  <div className="absolute bottom-12 right-12 opacity-10 text-[120px] leading-none font-serif text-white italic rotate-180">“</div>
                 </div>
 
-                {/* Strengths - Final Positive Reinforcement */}
-                <div className="bg-green-50 p-14 rounded-[5rem] border border-green-100 flex flex-col flex-1 justify-center">
-                  <header className="mb-10 flex items-center justify-center gap-4">
-                    <h4 className="text-sm font-bold text-green-700 uppercase tracking-[0.4em] flex items-center gap-3">
-                      <span className="text-2xl">✅</span> Pilar Kekuatan Utama
+                {/* Strengths List */}
+                <div className="bg-green-50 p-14 rounded-[5rem] border border-green-100 flex flex-col space-y-8">
+                  <header className="flex items-center justify-center gap-6">
+                    <div className="w-10 h-[1px] bg-green-200"></div>
+                    <h4 className="text-lg font-bold text-green-700 uppercase tracking-[0.5em] flex items-center gap-4">
+                      <span className="text-2xl">✨</span> Pilar Kekuatan Utama
                     </h4>
+                    <div className="w-10 h-[1px] bg-green-200"></div>
                   </header>
-                  <ul className="text-[26px] text-green-900 space-y-8 font-bold flex flex-col items-center text-center">
-                    {analysis.compatibility.strengths.slice(0, 3).map((s, i) => (
-                      <li key={i} className="flex items-center gap-4 leading-[1.1] max-w-[900px]">
-                        <span className="w-3 h-3 rounded-full bg-green-400 shrink-0"></span>
+                  <ul className="text-[28px] text-green-900 space-y-6 font-bold flex flex-col items-center text-center px-8">
+                    {analysis.compatibility.strengths.slice(0, 4).map((s, i) => (
+                      <li key={i} className="flex items-center gap-5 leading-[1.2] max-w-[800px]">
+                        <span className="w-4 h-4 rounded-full bg-green-400 shrink-0 shadow-sm"></span>
                         {s}
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                {/* Branding Footer */}
+                {/* Final Branding Link (Clean) */}
+                <div className="text-center text-[12px] text-gray-300 font-bold uppercase tracking-[1em] pt-4 pb-2">
+                  CosmicVibes.app
+                </div>
               </div>
             </div>
           </div>
