@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [personA, setPersonA] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [personB, setPersonB] = useState<BirthData>({ name: '', date: '', time: '', location: '' });
   const [analysis, setAnalysis] = useState<FullAnalysisResponse | null>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const headingRef = useRef<HTMLHeadingElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -70,33 +70,29 @@ const App: React.FC = () => {
     }, 1500);
   };
 
-  const handleDownloadPDF = () => {
+  const handleSaveImage = () => {
     if (!resultsRef.current || !analysis) return;
     
-    setIsDownloading(true);
+    setIsSaving(true);
     const element = resultsRef.current;
-    const fileName = `Laporan_CosmicVibes_${analysis.personA.name.replace(/\s+/g, '_')}_&_${analysis.personB.name.replace(/\s+/g, '_')}.pdf`;
-
-    const opt = {
-      margin: 10,
-      filename: fileName,
-      image: { type: 'jpeg', quality: 1.0 },
-      html2canvas: { 
-        scale: 2.5, 
-        useCORS: true, 
-        letterRendering: true,
-        scrollY: 0,
-        backgroundColor: '#fdfcfb'
-      },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    const fileName = `Hasil_CosmicVibes_${analysis.personA.name.replace(/\s+/g, '_')}_&_${analysis.personB.name.replace(/\s+/g, '_')}.jpg`;
 
     // @ts-ignore
-    window.html2pdf().set(opt).from(element).save().then(() => {
-      setIsDownloading(false);
+    window.html2canvas(element, {
+      scale: 2, // Double scale for high quality
+      useCORS: true,
+      backgroundColor: '#fdfcfb',
+      logging: false,
+    }).then((canvas: HTMLCanvasElement) => {
+      const link = document.createElement('a');
+      link.download = fileName;
+      link.href = canvas.toDataURL('image/jpeg', 0.9);
+      link.click();
+      setIsSaving(false);
     }).catch((err: any) => {
-      console.error("PDF download error:", err);
-      setIsDownloading(false);
+      console.error("Image save error:", err);
+      setIsSaving(false);
+      alert("Gagal menyimpan gambar. Silakan coba lagi.");
     });
   };
 
@@ -326,19 +322,19 @@ const App: React.FC = () => {
 
             <div className="flex flex-col gap-4 no-print mt-8">
               <button 
-                onClick={handleDownloadPDF} 
-                disabled={isDownloading}
+                onClick={handleSaveImage} 
+                disabled={isSaving}
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-5 rounded-2xl shadow-xl shadow-indigo-200 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-3"
               >
-                {isDownloading ? (
+                {isSaving ? (
                   <>
                     <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                    Menghasilkan Laporan...
+                    Menyimpan...
                   </>
                 ) : (
                   <>
                     <span>📥</span>
-                    Download Laporan PDF Lengkap
+                    Simpan Hasil
                   </>
                 )}
               </button>
