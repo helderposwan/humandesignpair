@@ -59,31 +59,31 @@ export const translateHDType = (type: HDType): string => {
 
 export const translateHDAuthority = (auth: string): string => {
   const map: Record<string, string> = {
-    [HDAuthority.Emotional]: 'Emotional - Solar Plexus',
-    [HDAuthority.Sacral]: 'Sacral',
-    [HDAuthority.Splenic]: 'Splenic',
+    [HDAuthority.Emotional]: 'Emosional - Solar Plexus',
+    [HDAuthority.Sacral]: 'Sakral',
+    [HDAuthority.Splenic]: 'Splenic (Insting)',
     [HDAuthority.Ego]: 'Ego',
     [HDAuthority.SelfProjected]: 'Self Projected',
-    [HDAuthority.Environmental]: 'Environmental',
+    [HDAuthority.Environmental]: 'Lingkungan',
     [HDAuthority.Lunar]: 'Lunar'
   };
   return map[auth] || auth;
 };
 
 const getStrategy = (type: string): string => {
-  if (type === 'Generator' || type === 'Manifesting Generator') return "To Respond";
-  if (type === 'Projector') return "Wait for the Invitation";
-  if (type === 'Manifestor') return "To Inform";
-  if (type === 'Reflector') return "Wait a Lunar Cycle";
-  return "Unknown";
+  if (type === 'Generator' || type === 'Manifesting Generator') return "Menunggu untuk Merespons";
+  if (type === 'Projector') return "Menunggu Undangan";
+  if (type === 'Manifestor') return "Menginformasikan";
+  if (type === 'Reflector') return "Menunggu Siklus Lunar (28 Hari)";
+  return "Tidak Diketahui";
 };
 
 const getNotSelfTheme = (type: string): string => {
-  if (type === 'Generator' || type === 'Manifesting Generator') return "Frustration";
-  if (type === 'Projector') return "Bitterness";
-  if (type === 'Manifestor') return "Anger";
-  if (type === 'Reflector') return "Disappointment";
-  return "Unknown";
+  if (type === 'Generator' || type === 'Manifesting Generator') return "Frustrasi";
+  if (type === 'Projector') return "Kepahitan (Bitterness)";
+  if (type === 'Manifestor') return "Kemarahan";
+  if (type === 'Reflector') return "Kekecewaan";
+  return "Tidak Diketahui";
 };
 
 export const getCommunicationStyle = (hdType: string): string => {
@@ -101,10 +101,10 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
   if (dateStr === "1995-05-23" && (timeStr === "04:32" || timeStr === "04:30")) {
     return {
       hdType: "Manifesting Generator",
-      hdAuthority: "Sacral",
+      hdAuthority: "Sakral",
       hdProfile: "2 / 4",
-      hdStrategy: "To Respond",
-      hdNotSelfTheme: "Frustration",
+      hdStrategy: "Menunggu untuk Merespons",
+      hdNotSelfTheme: "Frustrasi",
       hdDefinition: "Split Definition",
       hdIncarnationCross: "Right Angle Cross of The Sleeping Phoenix (20/34 | 55/59)",
       communicationStyle: getCommunicationStyle("Manifesting Generator")
@@ -114,10 +114,10 @@ export const getMockHDData = (dateStr: string, timeStr: string, name: string, lo
   if (dateStr === "1997-09-11" && (timeStr === "09:50" || timeStr === "09:51")) {
     return {
       hdType: "Manifesting Generator",
-      hdAuthority: "Emotional - Solar Plexus",
+      hdAuthority: "Emosional - Solar Plexus",
       hdProfile: "2 / 4",
-      hdStrategy: "To Respond",
-      hdNotSelfTheme: "Frustration",
+      hdStrategy: "Menunggu untuk Merespons",
+      hdNotSelfTheme: "Frustrasi",
       hdDefinition: "Single Definition",
       hdIncarnationCross: "Right Angle Cross of Rulership (47/22 | 45/26)",
       communicationStyle: getCommunicationStyle("Manifesting Generator")
@@ -189,36 +189,36 @@ export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { 
   // MECHANICS-BASED TYPE SCORING
   const typeResonance: Record<string, {s: number, arch: string, head: string, s1: string, c1: string}> = {
     'Generator & Projector': { 
-      s: 55, arch: "The Guided Powerhouse", head: "Keseimbangan Visi dan Eksekusi",
+      s: 55, arch: "Pembangkit Tenaga Terpandu", head: "Keseimbangan Visi dan Eksekusi",
       s1: "Projector mengarahkan energi sakral Generator secara efisien", c1: "Projector bisa merasa lelah jika memaksakan ritme Generator"
     },
     'Manifesting Generator & Projector': { 
-      s: 58, arch: "The Efficient Visionaries", head: "Kombinasi Strategi dan Kecepatan",
+      s: 58, arch: "Visioner Efisien", head: "Kombinasi Strategi dan Kecepatan",
       s1: "Sinergi antara visi tajam dan eksekusi kilat", c1: "Ketimpangan level energi yang signifikan"
     },
     'Generator & Generator': { 
-      s: 50, arch: "The Collective Motor", head: "Harmoni Kerja Berkelanjutan",
+      s: 50, arch: "Motor Kolektif", head: "Harmoni Kerja Berkelanjutan",
       s1: "Dua sumber energi yang saling menguatkan", c1: "Risiko 'stuck' bersama jika tidak memiliki tujuan jelas"
     },
     'Manifesting Generator & Manifesting Generator': {
-      s: 52, arch: "The High-Frequency Pair", head: "Akselerasi Tanpa Batas",
+      s: 52, arch: "Pasangan Frekuensi Tinggi", head: "Akselerasi Tanpa Batas",
       s1: "Saling memahami kecepatan satu sama lain", c1: "Komunikasi sering terburu-buru dan melewatkan detil"
     },
     'Manifestor & Generator': { 
-      s: 40, arch: "Initiator & Builder", head: "Dinamika Aksi Mandiri",
+      s: 40, arch: "Inisiator & Pembangun", head: "Dinamika Aksi Mandiri",
       s1: "Kekuatan untuk memulai dan menyelesaikan", c1: "Manifestor merasa dikontrol, Generator merasa diabaikan"
     },
     'Manifestor & Manifestor': { 
-      s: 25, arch: "The Independent Souls", head: "Dua Kapten Satu Kapal",
+      s: 25, arch: "Jiwa Independen", head: "Dua Kapten Satu Kapal",
       s1: "Respek tinggi atas kemandirian masing-masing", c1: "Clash ego dan kesulitan dalam sinkronisasi niat"
     },
     'Projector & Projector': { 
-      s: 30, arch: "The Non-Energy Guides", head: "Koneksi Intelektual Mendalam",
+      s: 30, arch: "Pemandu Non-Energi", head: "Koneksi Intelektual Mendalam",
       s1: "Saling mengenali dan menghargai nilai satu sama lain", c1: "Kurangnya 'motor' energi untuk mewujudkan ide menjadi aksi"
     }
   };
 
-  const resonance = typeResonance[combination] || { s: 35, arch: "The Soul Seekers", head: "Eksplorasi Frekuensi Unik", s1: "Sudut pandang yang saling melengkapi", c1: "Tantangan dalam menemukan ritme harian" };
+  const resonance = typeResonance[combination] || { s: 35, arch: "Pencari Jiwa", head: "Eksplorasi Frekuensi Unik", s1: "Sudut pandang yang saling melengkapi", c1: "Tantangan dalam menemukan ritme harian" };
   score += resonance.s;
   strengths.push(resonance.s1);
   challenges.push(resonance.c1);
@@ -240,10 +240,10 @@ export const calculateCompatibility = (a: any, b: any): CompatibilityResult & { 
   // AUTHORITY ALIGNMENT (+/- 10 pts)
   const authA = a.hdAuthority;
   const authB = b.hdAuthority;
-  if (authA.includes('Emotional') && authB.includes('Emotional')) {
+  if (authA.includes('Emosional') && authB.includes('Emosional')) {
     score -= 8;
     challenges.push("Gelombang emosi ganda yang menuntut kesabaran tinggi");
-  } else if (!authA.includes('Emotional') && !authB.includes('Emotional')) {
+  } else if (!authA.includes('Emosional') && !authB.includes('Emosional')) {
     score += 8;
     strengths.push("Kejelasan komunikasi yang cepat dan instingtif");
   }

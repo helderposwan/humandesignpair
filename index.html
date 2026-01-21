@@ -11,7 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- html2canvas library for image export -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script>
@@ -21,33 +21,35 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            background-color: #050505;
+            color: #ffffff;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         .font-heading {
             font-family: 'Outfit', sans-serif;
         }
-        .soft-shadow {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
-
-        /* Print styles */
-        @media print {
-            body { background: white !important; padding: 0 !important; }
-            .no-print { display: none !important; }
-            #root { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
-            .max-w-md { max-width: none !important; }
-            .rounded-\[2\.5rem\], .rounded-3xl, .rounded-xl, .rounded-2xl { border: 1px solid #eee !important; border-radius: 1rem !important; box-shadow: none !important; }
-            header h1 { font-size: 2rem !important; color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
-            .bg-indigo-600 { background-color: #4f46e5 !important; color: white !important; -webkit-print-color-adjust: exact; }
-            .bg-white { background-color: white !important; -webkit-print-color-adjust: exact; }
+        ::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
 
         /* Cursor effect for typewriter */
         .cursor {
             display: inline-block;
             width: 2px;
-            background-color: #4f46e5;
+            background-color: #6366f1;
             margin-left: 2px;
             animation: blink 0.7s infinite;
         }
@@ -66,6 +68,7 @@
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
     "gsap": "https://esm.sh/gsap@3.12.5",
     "gsap/TextPlugin": "https://esm.sh/gsap@3.12.5/TextPlugin",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
     "gsap/": "https://esm.sh/gsap@^3.14.2/"
