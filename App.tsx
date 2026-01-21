@@ -546,7 +546,7 @@ const App: React.FC = () => {
           
           <footer className="mt-auto text-center py-6 border-t border-white/5 no-print">
             <p className="text-[10px] text-gray-600 uppercase tracking-[0.3em]">
-              © 2026 Cosmic Vibes • Dibangun oleh Haze Nightwalker
+              © 2026 Cosmic Vibes • Built by Haze Nightwalker
             </p>
           </footer>
         </div>
