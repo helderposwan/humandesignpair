@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useLayoutEffect, useMemo, useCallback } from 'react';
 import { BirthData, FullAnalysisResponse, Language } from './types.ts';
 import PersonInput from './components/PersonInput.tsx';
@@ -7,8 +6,9 @@ import { getTranslation } from './translations.ts';
 import { gsap } from 'gsap';
 import { TextPlugin } from 'gsap/TextPlugin';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { Draggable } from 'gsap/Draggable';
 
-gsap.registerPlugin(TextPlugin, ScrollTrigger);
+gsap.registerPlugin(TextPlugin, ScrollTrigger, Draggable);
 
 // --- CUSTOM CURSOR (DESKTOP ONLY) ---
 const CustomCursor = React.memo(() => {
@@ -446,11 +446,13 @@ const App: React.FC = () => {
       >
         {step === 'welcome' && (
           <Section className="items-center text-center justify-center">
-            <div className="relative z-10 flex flex-col items-center justify-center h-full">
+            {/* Centered Content Container - Optimized for mobile vertical centering */}
+            <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-4xl mx-auto min-h-[50vh] md:min-h-0">
+              
               <RevealText text="QUANTUM" className="text-[3.5rem] leading-[1] md:text-[10rem] font-heading font-black md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500" />
               <RevealText text="SYNERGY" delay={0.1} className="text-[3.5rem] leading-[1] md:text-[10rem] font-heading font-black md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-gray-200 to-gray-800" />
               
-              <p className="mt-8 text-[10px] md:text-lg font-mono text-indigo-300 tracking-[0.2em] md:tracking-[0.5em] uppercase opacity-80 max-w-xl mx-auto px-4">
+              <p className="mt-8 text-[10px] md:text-lg font-mono text-indigo-300 tracking-[0.2em] md:tracking-[0.5em] uppercase opacity-80 max-w-xl mx-auto px-4 text-center">
                 {t.intro.subtitle}
               </p>
 
@@ -684,7 +686,14 @@ const App: React.FC = () => {
             <div className="flex flex-col items-center justify-center mb-20 relative z-10">
                {/* Use Flexbox instead of Absolute positioning for the percent sign to avoid overlaps */}
                <div className="flex items-start justify-center gap-2">
-                  <span className="text-[200px] leading-[0.8] font-heading font-black text-white tracking-tighter">
+                  <span 
+                    className="text-[200px] leading-[0.8] font-heading font-black text-white tracking-tighter relative z-10"
+                    style={{ 
+                      transform: 'translateY(-10px)', 
+                      WebkitTextStroke: '8px #030303', 
+                      paintOrder: 'stroke fill' 
+                    }}
+                  >
                     {analysis?.compatibility.score}
                   </span>
                   <span className="text-7xl font-black text-gray-500 mt-6">%</span>
