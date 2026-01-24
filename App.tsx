@@ -14,6 +14,10 @@ const CustomCursor = React.memo(() => {
   const cursorRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
+    // OPTIMIZATION: Do not attach listeners on mobile/touch devices to save CPU
+    const isMobile = window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(pointer: coarse)").matches;
+    if (isMobile) return;
+
     const cursor = cursorRef.current;
     if (!cursor) return;
 
@@ -52,7 +56,7 @@ const CustomCursor = React.memo(() => {
   return <div ref={cursorRef} className="custom-cursor hidden md:block"></div>;
 });
 
-// --- GALAXY PARALLAX BACKGROUND ---
+// --- GALAXY PARALLAX BACKGROUND (OPTIMIZED) ---
 const GalaxyBackground = React.memo(() => {
   const refContainer = useRef<HTMLDivElement>(null);
   const refSmall = useRef<HTMLDivElement>(null);
@@ -60,9 +64,15 @@ const GalaxyBackground = React.memo(() => {
   const refLarge = useRef<HTMLDivElement>(null);
 
   // Generate stars once using useMemo to avoid recalculation
+  // OPTIMIZATION: Reduce star count significantly on mobile for 4GB RAM devices
   const stars = useMemo(() => {
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    // 30% density on mobile, 100% on desktop
+    const density = isMobile ? 0.3 : 1.0; 
+
     const generate = (count: number, sizeRange: [number, number], colorBase: string) => {
-      return Array.from({ length: count }).map((_, i) => ({
+      const adjustedCount = Math.floor(count * density);
+      return Array.from({ length: adjustedCount }).map((_, i) => ({
         id: i,
         left: Math.random() * 100,
         top: Math.random() * 100,
@@ -82,8 +92,12 @@ const GalaxyBackground = React.memo(() => {
   }, []);
 
   useLayoutEffect(() => {
+    // OPTIMIZATION: Completely disable Parallax Mouse Listeners on Mobile
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    if (isMobile) return; 
+
     const ctx = gsap.context(() => {
-      // Parallax Mouse Movement
+      // Parallax Mouse Movement (Desktop Only)
       const handleMouseMove = (e: MouseEvent) => {
         const x = (e.clientX - window.innerWidth / 2);
         const y = (e.clientY - window.innerHeight / 2);
@@ -109,7 +123,7 @@ const GalaxyBackground = React.memo(() => {
       <div className="absolute inset-0 opacity-20" 
            style={{ background: 'radial-gradient(circle at 20% 20%, #312e81 0%, transparent 50%)' }}></div>
 
-      {/* Parallax Layers */}
+      {/* Parallax Layers - transform only applied on desktop via GSAP */}
       <div ref={refSmall} className="absolute inset-[-100px] will-change-transform">
         {stars.small.map(s => (
           <div key={`s-${s.id}`} className="absolute rounded-full star-animate"
@@ -220,8 +234,9 @@ const CosmicPortalLoader = React.memo(({ onComplete }: { onComplete: () => void 
 });
 
 // --- LAYOUT COMPONENTS ---
+// UPDATED: Use 100dvh for mobile viewport consistency
 const Section = React.memo(({ children, className = "" }: { children?: React.ReactNode, className?: string }) => (
-  <section className={`min-h-screen w-full flex flex-col justify-center px-6 md:px-24 py-20 ${className} relative z-10`}>
+  <section className={`min-h-[100dvh] w-full flex flex-col justify-center px-6 md:px-24 py-16 md:py-20 ${className} relative z-10`}>
     {children}
   </section>
 ));
@@ -356,7 +371,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="relative min-h-screen text-white font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden flex flex-col">
+    <div className="relative min-h-[100dvh] text-white font-sans selection:bg-indigo-500 selection:text-white overflow-x-hidden flex flex-col">
       <CustomCursor />
       
       {/* GALAXY PARALLAX BACKGROUND */}
@@ -381,19 +396,19 @@ const App: React.FC = () => {
         className="relative z-10 opacity-0 flex-1"
       >
         {step === 'welcome' && (
-          <Section className="items-center text-center">
-            <div className="relative z-10">
-              <RevealText text="QUANTUM" className="text-5xl md:text-[10rem] font-heading font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500" />
-              <RevealText text="SYNERGY" delay={0.1} className="text-5xl md:text-[10rem] font-heading font-black leading-[0.9] md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-gray-200 to-gray-800" />
+          <Section className="items-center text-center justify-center">
+            <div className="relative z-10 flex flex-col items-center justify-center h-full">
+              <RevealText text="QUANTUM" className="text-[3.5rem] leading-[1] md:text-[10rem] font-heading font-black md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-500" />
+              <RevealText text="SYNERGY" delay={0.1} className="text-[3.5rem] leading-[1] md:text-[10rem] font-heading font-black md:leading-[0.85] tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-gray-200 to-gray-800" />
               
-              <p className="mt-8 text-xs md:text-lg font-mono text-indigo-300 tracking-[0.3em] md:tracking-[0.5em] uppercase opacity-80 max-w-xl mx-auto px-6">
+              <p className="mt-8 text-[10px] md:text-lg font-mono text-indigo-300 tracking-[0.2em] md:tracking-[0.5em] uppercase opacity-80 max-w-xl mx-auto px-4">
                 Analisis kecocokan berbasis Human Design & Algoritma Kosmik
               </p>
 
-              <div className="mt-16 md:mt-20 flex justify-center">
+              <div className="mt-12 md:mt-20 flex justify-center">
                 <button 
                   onClick={() => setStep('input')}
-                  className="group relative px-10 md:px-12 py-5 md:py-6 overflow-hidden rounded-full bg-white text-black font-bold tracking-widest text-xs md:text-sm transition-all hover:scale-105 hover:bg-indigo-50"
+                  className="group relative px-8 py-4 md:px-12 md:py-6 overflow-hidden rounded-full bg-white text-black font-bold tracking-widest text-[10px] md:text-sm transition-all hover:scale-105 hover:bg-indigo-50"
                 >
                    <span className="relative z-10 flex items-center gap-2 group-hover:gap-4 transition-all">
                      MULAI ANALISIS <span className="text-lg md:text-xl">→</span>
@@ -408,11 +423,11 @@ const App: React.FC = () => {
           <Section className="py-24 md:py-20">
             <div className="max-w-7xl mx-auto w-full">
               
-              <div className="mb-12 md:mb-20 text-center">
-                <h2 className="text-4xl md:text-6xl font-heading font-black tracking-tight leading-tight">
+              <div className="mb-8 md:mb-20 text-center">
+                <h2 className="text-3xl md:text-6xl font-heading font-black tracking-tight leading-tight">
                   INPUT DATA <span className="text-indigo-500">.</span>
                 </h2>
-                <p className="mt-4 text-gray-400 text-xs md:text-sm font-mono tracking-widest uppercase opacity-60">
+                <p className="mt-2 md:mt-4 text-gray-400 text-[10px] md:text-sm font-mono tracking-widest uppercase opacity-60">
                   Masukkan detail kelahiran untuk kalkulasi presisi
                 </p>
               </div>
@@ -422,7 +437,7 @@ const App: React.FC = () => {
                 <PersonInput index={2} label="SUBJEK BETA" data={personB} onChange={setPersonB} accentColor="text-rose-400" placeholderName="NAMA BETA" />
               </div>
               
-              <div className="mt-16 md:mt-20 flex flex-col md:flex-row justify-end items-center">
+              <div className="mt-12 md:mt-20 flex flex-col md:flex-row justify-end items-center">
                 <button 
                   onClick={handleReveal}
                   className="w-full md:w-auto group relative inline-flex items-center justify-center px-8 md:px-12 py-5 md:py-6 text-sm md:text-lg font-bold text-white transition-all duration-300 bg-white/5 border border-white/20 rounded-full hover:bg-white hover:text-black hover:border-transparent focus:outline-none hover:shadow-[0_0_30px_rgba(255,255,255,0.3)] active:scale-95 backdrop-blur-md"
@@ -436,8 +451,8 @@ const App: React.FC = () => {
         )}
 
         {step === 'loading' && (
-          <div className="h-screen flex flex-col items-center justify-center">
-             <div className="text-5xl md:text-9xl font-heading font-black animate-pulse tracking-tighter">
+          <div className="h-[100dvh] flex flex-col items-center justify-center">
+             <div className="text-4xl md:text-9xl font-heading font-black animate-pulse tracking-tighter">
                 PROCESSING
              </div>
              <div className="mt-4 font-mono text-[10px] md:text-xs tracking-[0.5em] md:tracking-[1em] text-indigo-400 text-center px-4">
@@ -451,7 +466,7 @@ const App: React.FC = () => {
             {/* Same Results Code ... (kept exactly as requested for visual fidelity) */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 mb-16 md:mb-24 items-end">
               <div className="lg:col-span-8">
-                <h2 className="res-title text-5xl md:text-8xl font-heading font-black leading-[0.9] tracking-tighter mb-6 break-words">
+                <h2 className="res-title text-4xl md:text-8xl font-heading font-black leading-[0.9] tracking-tighter mb-6 break-words">
                   {analysis.compatibility.headline.toUpperCase()}
                 </h2>
                 <div className="res-title flex flex-wrap gap-4">
