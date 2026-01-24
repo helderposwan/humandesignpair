@@ -19,44 +19,97 @@
         window.process = window.process || { env: {} };
     </script>
     <style>
+        :root {
+            --cursor-size: 20px;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #050505;
+            background-color: #030303; /* Deeper black */
             color: #ffffff;
             min-height: 100vh;
             overflow-x: hidden;
+            cursor: none; /* Hide default cursor for custom one */
         }
+
         .font-heading {
             font-family: 'Outfit', sans-serif;
         }
         
-        /* Custom Scrollbar */
+        /* Smooth Scrollbar behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+        
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f0f0f;
+            background: #030303;
         }
         ::-webkit-scrollbar-thumb {
             background: #333;
-            border-radius: 4px;
+            border-radius: 0px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #6366f1;
         }
 
-        /* Cursor effect for typewriter */
-        .cursor {
-            display: inline-block;
-            width: 2px;
-            background-color: #6366f1;
-            margin-left: 2px;
-            animation: blink 0.7s infinite;
+        /* Custom Cursor Styling */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--cursor-size);
+            height: var(--cursor-size);
+            border: 1px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+            mix-blend-mode: difference;
+            will-change: transform; /* Performance optimization */
         }
-        @keyframes blink {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
+        
+        .custom-cursor.hovered {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: transparent;
+            backdrop-filter: blur(2px);
+        }
+
+        /* Utility for text selection */
+        ::selection {
+            background: #6366f1;
+            color: #fff;
+        }
+
+        /* Hide calendar picker icon but keep functionality area */
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+        }
+
+        /* Star Animation */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); box-shadow: 0 0 2px rgba(255, 255, 255, 0.8); }
+        }
+        
+        .star-animate {
+            animation: twinkle var(--duration, 3s) infinite ease-in-out var(--delay, 0s);
+            will-change: opacity, transform; /* Hints browser to put on GPU layer */
         }
     </style>
 <script type="importmap">
