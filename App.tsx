@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useLayoutEffect, useMemo, useCallback } from 'react';
 import { BirthData, FullAnalysisResponse, Language } from './types.ts';
 import PersonInput from './components/PersonInput.tsx';
@@ -689,14 +690,14 @@ const App: React.FC = () => {
                   <span 
                     className="text-[200px] leading-[0.8] font-heading font-black text-white tracking-tighter relative z-10"
                     style={{ 
-                      transform: 'translateY(-10px)', 
+                      transform: 'translateY(-30px)', 
                       WebkitTextStroke: '8px #030303', 
                       paintOrder: 'stroke fill' 
                     }}
                   >
                     {analysis?.compatibility.score}
                   </span>
-                  <span className="text-7xl font-black text-gray-500 mt-6">%</span>
+                  <span className="text-7xl font-black text-gray-500 mt-2" style={{ transform: 'translateY(-10px)' }}>%</span>
                </div>
                
                <h2 className="text-4xl font-heading font-light text-white mt-10 tracking-tight text-center max-w-3xl leading-tight">
