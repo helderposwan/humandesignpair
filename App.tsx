@@ -667,7 +667,7 @@ const App: React.FC = () => {
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-rose-900/10 blur-[100px] rounded-full pointer-events-none"></div>
 
             {/* Header */}
-            <header className="flex justify-between items-start mb-16 relative z-10">
+            <header className="flex justify-between items-start mb-20 relative z-10">
               <div className="flex flex-col">
                 <h1 className="text-5xl font-heading font-black text-white tracking-tighter">COSMIC VIBES</h1>
                 <p className="text-indigo-400 text-sm font-mono tracking-[0.4em] mt-2 uppercase">Quantum Synergy Report</p>
@@ -680,51 +680,50 @@ const App: React.FC = () => {
               </div>
             </header>
 
-            {/* Main Score Section */}
-            <div className="flex flex-col items-center justify-center mb-16 relative z-10">
-               <div className="relative">
-                  <span 
-                    className="text-[200px] leading-[0.8] font-heading font-black text-white tracking-tighter"
-                    style={{ WebkitTextStroke: '8px #030303', paintOrder: 'stroke fill' }}
-                  >
+            {/* Main Score Section - IMPROVED LAYOUT FOR HTML2CANVAS */}
+            <div className="flex flex-col items-center justify-center mb-20 relative z-10">
+               {/* Use Flexbox instead of Absolute positioning for the percent sign to avoid overlaps */}
+               <div className="flex items-start justify-center gap-2">
+                  <span className="text-[200px] leading-[0.8] font-heading font-black text-white tracking-tighter">
                     {analysis?.compatibility.score}
                   </span>
-                  <span className="text-6xl font-black text-gray-500 absolute top-4 -right-12">%</span>
+                  <span className="text-7xl font-black text-gray-500 mt-6">%</span>
                </div>
-               <h2 className="text-4xl font-heading font-light text-white mt-8 tracking-tight text-center max-w-2xl">
+               
+               <h2 className="text-4xl font-heading font-light text-white mt-10 tracking-tight text-center max-w-3xl leading-tight">
                  {analysis?.compatibility.headline}
                </h2>
-               <div className="mt-6 px-6 py-2 bg-white/5 rounded-full border border-white/10">
-                  <span className="text-sm font-bold tracking-[0.2em] text-indigo-300 uppercase">{analysis?.compatibility.archetype}</span>
+               <div className="mt-8 px-8 py-3 bg-white/5 rounded-full border border-white/10">
+                  <span className="text-base font-bold tracking-[0.3em] text-indigo-300 uppercase">{analysis?.compatibility.archetype}</span>
                </div>
             </div>
 
             {/* Compact Profiles Grid */}
-            <div className="grid grid-cols-2 gap-8 mb-12 relative z-10">
+            <div className="grid grid-cols-2 gap-10 mb-16 relative z-10">
               {analysis && <CompactDarkProfile profile={analysis.personA} color="text-indigo-400" label={t.input.labelAlpha} t={t.results} />}
               {analysis && <CompactDarkProfile profile={analysis.personB} color="text-rose-400" label={t.input.labelBeta} t={t.results} />}
             </div>
 
             {/* Summary Box */}
-            <div className="bg-[#080808] border-l-4 border-indigo-500 p-10 rounded-r-[2rem] mb-12 relative z-10">
-               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-[0.3em] mb-6">{t.results.summary}</h4>
-               <p className="text-2xl font-light italic text-gray-200 leading-relaxed">
+            <div className="bg-[#080808] border-l-4 border-indigo-500 p-12 rounded-r-[2rem] mb-16 relative z-10">
+               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-[0.3em] mb-8">{t.results.summary}</h4>
+               <p className="text-3xl font-light italic text-gray-200 leading-relaxed">
                  "{analysis?.compatibility.summary}"
                </p>
             </div>
 
             {/* Key Strengths (3 max) */}
-            <div className="grid grid-cols-1 gap-4 mb-auto relative z-10">
+            <div className="grid grid-cols-1 gap-6 mb-auto relative z-10 pb-20">
                {analysis?.compatibility.strengths.slice(0, 3).map((s, i) => (
-                 <div key={i} className="flex items-center gap-6 p-4 border-b border-white/5">
-                    <span className="text-xl text-green-400">✦</span>
-                    <span className="text-lg font-medium text-gray-300">{s}</span>
+                 <div key={i} className="flex items-center gap-6 p-6 border-b border-white/5">
+                    <span className="text-2xl text-green-400">✦</span>
+                    <span className="text-xl font-medium text-gray-300">{s}</span>
                  </div>
                ))}
             </div>
 
             {/* Footer */}
-            <div className="mt-16 pt-8 border-t border-white/10 flex justify-between items-center text-gray-500 text-xs font-mono tracking-widest uppercase relative z-10">
+            <div className="mt-auto pt-8 border-t border-white/10 flex justify-between items-center text-gray-500 text-sm font-mono tracking-widest uppercase relative z-10">
                <span>{t.results.generatedOn} {new Date().toLocaleDateString()}</span>
                <span>cosmicvibes.app</span>
             </div>
