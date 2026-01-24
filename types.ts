@@ -1,4 +1,6 @@
 
+export type Language = 'id' | 'en';
+
 export interface BirthData {
   name: string;
   date: string; // YYYY-MM-DD

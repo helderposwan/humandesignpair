@@ -7,10 +7,17 @@ interface PersonInputProps {
   onChange: (data: any) => void;
   accentColor: string;
   placeholderName?: string;
+  placeholderDate?: string;
+  placeholderTime?: string;
+  placeholderCity?: string;
   index: number;
 }
 
-const PersonInput: React.FC<PersonInputProps> = ({ label, data, onChange, accentColor, placeholderName, index }) => {
+const PersonInput: React.FC<PersonInputProps> = ({ 
+  label, data, onChange, accentColor, 
+  placeholderName, placeholderDate, placeholderTime, placeholderCity,
+  index 
+}) => {
   const dateInputRef = useRef<HTMLInputElement>(null);
   const timeInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,9 +38,7 @@ const PersonInput: React.FC<PersonInputProps> = ({ label, data, onChange, accent
 
   return (
     <div className="w-full h-full">
-      {/* Bento Glass Card Container 
-          Updated for stronger contrast: darker bg, higher blur, distinct border/shadow 
-      */}
+      {/* Bento Glass Card Container */}
       <div className="relative h-full overflow-hidden rounded-[2.5rem] bg-gray-900/40 backdrop-blur-2xl border border-white/10 p-8 md:p-12 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-500 hover:bg-gray-800/50 hover:border-white/20 hover:shadow-indigo-500/10 group will-change-transform ring-1 ring-white/5">
         
         {/* Decorative Index Watermark - Inside the card now */}
@@ -81,7 +86,7 @@ const PersonInput: React.FC<PersonInputProps> = ({ label, data, onChange, accent
                     className="peer w-full bg-transparent border-b border-white/10 py-3 md:py-4 text-lg md:text-xl font-heading font-light text-white focus:border-white/60 focus:outline-none transition-all min-h-[50px] md:min-h-[60px]"
                   />
                    <label className="absolute left-0 -top-5 text-[10px] tracking-widest text-gray-500 font-light pointer-events-none uppercase">
-                    TGL LAHIR
+                    {placeholderDate || "TGL LAHIR"}
                   </label>
                   <div className={`absolute bottom-0 left-0 h-[1px] bg-white w-0 transition-all duration-500 peer-focus:w-full opacity-50`}></div>
                 </div>
@@ -101,7 +106,7 @@ const PersonInput: React.FC<PersonInputProps> = ({ label, data, onChange, accent
                     className="peer w-full bg-transparent border-b border-white/10 py-3 md:py-4 text-lg md:text-xl font-heading font-light text-white focus:border-white/60 focus:outline-none transition-all min-h-[50px] md:min-h-[60px]"
                   />
                    <label className="absolute left-0 -top-5 text-[10px] tracking-widest text-gray-500 font-light pointer-events-none uppercase">
-                    JAM
+                    {placeholderTime || "JAM"}
                   </label>
                   <div className={`absolute bottom-0 left-0 h-[1px] bg-white w-0 transition-all duration-500 peer-focus:w-full opacity-50`}></div>
                 </div>
@@ -118,7 +123,7 @@ const PersonInput: React.FC<PersonInputProps> = ({ label, data, onChange, accent
                 className="peer w-full bg-transparent border-b border-white/10 py-3 md:py-4 text-lg md:text-2xl font-heading font-light text-white focus:border-white/60 focus:outline-none transition-all"
               />
               <label className="absolute left-0 top-3 md:top-4 text-base md:text-lg text-gray-500 font-light transition-all peer-focus:-top-5 peer-focus:text-[10px] peer-focus:text-gray-400 peer-focus:tracking-widest peer-[&:not(:placeholder-shown)]:-top-5 peer-[&:not(:placeholder-shown)]:text-[10px] peer-[&:not(:placeholder-shown)]:tracking-widest pointer-events-none uppercase">
-                KOTA KELAHIRAN
+                {placeholderCity || "KOTA KELAHIRAN"}
               </label>
                <div className={`absolute bottom-0 left-0 h-[1px] bg-white w-0 transition-all duration-500 peer-focus:w-full opacity-50`}></div>
             </div>
